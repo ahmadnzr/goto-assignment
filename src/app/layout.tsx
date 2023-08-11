@@ -1,7 +1,11 @@
-import Navbar from "@/components/template/Navbar";
-import "./globals.css";
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
+
+import "./globals.css";
+
+import Navbar from "@/components/template/Navbar";
+import ContentWrapper from "@/container/ContentWrapper";
+import BreadCrumb from "@/components/atoms/BreadCrumb";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
@@ -15,11 +19,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const steps = ["home", "detail"];
+
   return (
     <html lang="en">
       <body className={nunito.className}>
-        <Navbar />
-        {children}
+        {/* <BreadCrumb steps={steps} /> */}
+        <ContentWrapper>{children}</ContentWrapper>
       </body>
     </html>
   );
