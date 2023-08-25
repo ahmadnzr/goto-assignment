@@ -2,20 +2,43 @@ import React from "react";
 import styled from "@emotion/styled";
 
 import Icon, { IconName } from "../Icon";
+import { ColorValues, Colors } from "..";
 
 interface CButtonProps {
   type: "primary" | "base";
+  size: "sm" | "md";
+  shadow: boolean;
+  bgColor: ColorValues;
 }
 
 interface Props extends Partial<CButtonProps> {
   icon?: IconName;
+  color?: ColorValues;
   onClick?: () => void;
 }
 
-const CircleButton = ({ icon = "plus", type = "base", onClick }: Props) => {
+const CircleButton = ({
+  icon = "plus",
+  type = "base",
+  onClick,
+  size = "md",
+  shadow = true,
+  color = Colors.PRIMARY_10,
+  bgColor = Colors.NEUTRAL_10,
+}: Props) => {
   return (
-    <CButton type={type} onClick={onClick}>
-      <Icon name={icon} className="icon-btn" />
+    <CButton
+      size={size}
+      shadow={shadow}
+      type={type}
+      onClick={onClick}
+      bgColor={bgColor}
+    >
+      <Icon
+        name={icon}
+        className="icon-btn"
+        color={type === "primary" ? Colors.NEUTRAL_10 : color}
+      />
     </CButton>
   );
 };
@@ -24,17 +47,12 @@ export default CircleButton;
 
 const CButton = styled.div(
   {
-    height: "40px",
-    width: "40px",
-
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
 
-    backgroundColor: `var(--neutral-10)`,
     border: "none",
     borderRadius: `var(--radius-full)`,
-    boxShadow: `var(--shadow-sm)`,
     cursor: "pointer",
     transition: "var(--transition)",
 
@@ -46,15 +64,14 @@ const CButton = styled.div(
       },
     },
   },
-  ({ type }: CButtonProps) => ({
-    ...(type === "primary"
-      ? {
-          backgroundColor: `var(--primary-10)`,
-          color: `var(--neutral-10)`,
-        }
-      : {
-          backgroundColor: `var(--neutral-10})`,
-          color: `var(--primary-10)`,
-        }),
+  ({ type, size, shadow, bgColor }: CButtonProps) => ({
+    height: size === "sm" ? "30px" : "40px",
+    width: size === "sm" ? "30px" : "40px",
+    backgroundColor:
+      type === "primary" ? `var(--primary-10)` : `var(--${bgColor})`,
+    boxShadow: shadow ? `var(--shadow-sm)` : "none",
+    "&:hover": {
+      boxShadow: shadow ? `var(--shadow-md)` : "none",
+    },
   })
 );

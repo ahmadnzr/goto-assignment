@@ -1,7 +1,11 @@
 import styled from "@emotion/styled";
 import React from "react";
 
-interface Props {
+interface ButtonType {
+  variant: "contained" | "text";
+}
+
+interface Props extends Partial<ButtonType> {
   type?: "button" | "submit";
   children: React.ReactNode;
   onClick?: () => void;
@@ -15,12 +19,14 @@ const Button = ({
   onClick,
   width,
   className = "",
+  variant = "contained",
 }: Props) => {
   return (
     <CButton
       type={type}
       onClick={onClick}
       className={className}
+      variant={variant}
       style={{ width: width === "full" ? "100%" : "fit-content" }}
     >
       {children}
@@ -31,10 +37,14 @@ const Button = ({
 export default Button;
 
 const CButton = styled.button`
-  padding: 8px 20px;
+  padding: ${(props: ButtonType) =>
+    props.variant === "text" ? "0" : "10px 20px"};
   border: none;
-  background-color: var(--primary-10);
-  color: var(--neutral-10);
+  background-color: ${(props: ButtonType) =>
+    props.variant === "text" ? "transparent" : "var(--primary-10)"};
+  color: ${(props: ButtonType) =>
+    props.variant === "text" ? "var(--primary-10)" : "var(--neutral-10)"};
   font-weight: 700;
+  cursor: pointer;
   border-radius: var(--radius-md);
 `;

@@ -1,10 +1,12 @@
 import React from "react";
 import Navbar from "../Navbar";
-import { InputSearch } from "@/components/atoms";
+import { Colors, InputSearch, TextStyle } from "@/components/atoms";
 import styled from "@emotion/styled";
 import ContentWrapper from "@/container/ContentWrapper";
+import { useRouter } from "next/navigation";
 
 const TopContent = () => {
+  const router = useRouter();
   return (
     <Wrapper>
       <ContentWrapper>
@@ -14,9 +16,12 @@ const TopContent = () => {
             leftIcon="bar-3"
             rightIcon="plus"
             onClickNavLeft={() => {}}
-            onClickNavRight={() => {}}
-            title="Contact"
-          />
+            onClickNavRight={() => router.push("/add-contact")}
+          >
+            <TextStyle size="lg" weight="bold" color={Colors.PRIMARY_10}>
+              Contact
+            </TextStyle>
+          </Navbar>
           <InputSearch />
         </Content>
       </ContentWrapper>
