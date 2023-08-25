@@ -5,15 +5,37 @@ import styled from "@emotion/styled";
 
 import TextStyle from "@/components/atoms/TextStyle";
 import CircleButton from "@/components/atoms/CircleButton";
+import { Colors } from "@/components/atoms";
+import { IconName } from "@/components/atoms/Icon";
 
-const Navbar = () => {
+interface Props {
+  title?: string;
+  steps: string[];
+  leftIcon?: IconName;
+  rightIcon?: IconName;
+  onClickNavLeft?: () => void;
+  onClickNavRight?: () => void;
+}
+
+const Navbar = ({
+  steps,
+  onClickNavLeft,
+  onClickNavRight,
+  title,
+  leftIcon,
+  rightIcon,
+}: Props) => {
   return (
     <NavbarContainer>
-      <CircleButton icon="bar-3" />
-      <TextStyle size="lg" weight="bold">
-        My Phone Book
+      {steps.length > 1 ? (
+        <CircleButton icon="chevron-left" onClick={onClickNavLeft} />
+      ) : (
+        <CircleButton icon={leftIcon} onClick={onClickNavLeft} />
+      )}
+      <TextStyle size="lg" weight="bold" color={Colors.PRIMARY_10}>
+        {title}
       </TextStyle>
-      <CircleButton icon="plus" />
+      {rightIcon && <CircleButton icon={rightIcon} onClick={onClickNavRight} />}
     </NavbarContainer>
   );
 };

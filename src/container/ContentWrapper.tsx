@@ -4,17 +4,18 @@ import React from "react";
 
 interface Props {
   children: React.ReactNode;
+  padding?: string;
 }
 
-const ContentWrapper = ({ children }: Props) => {
-  return <Wrapper>{children}</Wrapper>;
+const ContentWrapper = ({ children, padding = "0px" }: Props) => {
+  return <Wrapper padding={padding}>{children}</Wrapper>;
 };
 
 const Wrapper = styled.div`
   width: var(--max-width);
   height: 100%;
   margin: 0 auto;
-  padding-bottom: 50px;
+  padding: ${(props: { padding: string }) => props.padding};
 `;
 
 export default ContentWrapper;

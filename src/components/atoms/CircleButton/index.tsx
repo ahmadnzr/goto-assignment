@@ -8,12 +8,13 @@ interface CButtonProps {
 }
 
 interface Props extends Partial<CButtonProps> {
-  icon: IconName;
+  icon?: IconName;
+  onClick?: () => void;
 }
 
-const CircleButton = ({ icon, type = "base" }: Props) => {
+const CircleButton = ({ icon = "plus", type = "base", onClick }: Props) => {
   return (
-    <CButton type={type}>
+    <CButton type={type} onClick={onClick}>
       <Icon name={icon} className="icon-btn" />
     </CButton>
   );

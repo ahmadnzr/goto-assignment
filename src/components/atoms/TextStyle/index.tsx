@@ -7,7 +7,7 @@ import { ColorValues, Colors } from "..";
 
 interface TextProps {
   weight?: "bold" | "semibold" | "normal" | "thin";
-  size?: "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
+  size?: "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
   color?: ColorValues;
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import styled from "@emotion/styled";
 
@@ -8,11 +8,15 @@ import { Colors, Icon, TextStyle } from "@/components/atoms";
 
 interface Props {
   isFavorite?: boolean;
+  onClick: () => void;
+  onClickFav: () => void;
 }
 
-const CardList = ({ isFavorite = false }: Props) => {
+const CardList = ({ isFavorite = false, onClick, onClickFav }: Props) => {
+  const [clickFav, setClickFav] = useState(false);
+
   return (
-    <CardWrapper>
+    <CardWrapper onClick={onClick}>
       <Image width="60" height="60" src="/avatar.jpg" alt="" />
       <DetailWrapper>
         <TextStyle weight="bold" size="sm">

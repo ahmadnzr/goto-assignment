@@ -2,6 +2,8 @@ import styled from "@emotion/styled";
 import React from "react";
 import {
   Bars3Icon,
+  ChevronLeftIcon,
+  EllipsisHorizontalIcon,
   EllipsisVerticalIcon,
   MagnifyingGlassIcon,
   PlusIcon,
@@ -16,7 +18,9 @@ export type IconName =
   | "bar-3"
   | "search"
   | "star-outlined"
-  | "star-solid";
+  | "star-solid"
+  | "chevron-left"
+  | "ellipse-vertical";
 
 interface Props {
   name: IconName;
@@ -31,7 +35,7 @@ const Icon = ({ name, className = "" }: Props) => {
     case "plus":
       return <PlusIcon style={iconStyle} className={className} />;
     case "ellipse-horizontal":
-      return <EllipsisVerticalIcon style={iconStyle} className={className} />;
+      return <EllipsisHorizontalIcon style={iconStyle} className={className} />;
     case "bar-3":
       return <Bars3Icon style={iconStyle} className={className} />;
     case "search":
@@ -40,6 +44,10 @@ const Icon = ({ name, className = "" }: Props) => {
       return <StarIcon style={iconStyle} className={className} />;
     case "star-solid":
       return <StarIconSolid style={iconStyle} className={className} />;
+    case "chevron-left":
+      return <ChevronLeftIcon style={iconStyle} className={className} />;
+    case "ellipse-vertical":
+      return <EllipsisVerticalIcon style={iconStyle} className={className} />;
   }
 };
 

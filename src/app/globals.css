@@ -10,9 +10,10 @@
   --neutral-10: hsla(0, 0%, 100%, 1);
   --neutral-20: hsla(0, 0%, 95%, 1);
   --neutral-30: hsla(0, 0%, 85%, 1);
-  --neutral-40: hsla(0, 0%, 40%, 1);
-  --neutral-50: hsla(0, 0%, 20%, 1);
+  --neutral-40: hsla(0, 0%, 50%, 1);
+  --neutral-50: hsla(0, 0%, 30%, 1);
 
+  --text-xxs: 10px;
   --text-xs: 12px;
   --text-sm: 16px;
   --text-md: 20px;
@@ -32,6 +33,8 @@
   --shadow-md-2: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
 
   --transition: 0.2s ease-in;
+
+  --floating-top-home: 120px
 }
 
 * {
