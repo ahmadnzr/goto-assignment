@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import styled from "@emotion/styled";
 
-import { Colors, Icon, TextStyle } from "@/components/atoms";
+import { CircleButton, Colors, TextStyle } from "@/components/atoms";
 
 interface Props {
   isFavorite?: boolean;
@@ -13,28 +13,40 @@ interface Props {
 }
 
 const CardList = ({ isFavorite = false, onClick, onClickFav }: Props) => {
-  const [clickFav, setClickFav] = useState(false);
-
   return (
-    <CardWrapper onClick={onClick}>
-      <Image width="60" height="60" src="/avatar.jpg" alt="" />
-      <DetailWrapper>
-        <TextStyle weight="bold" size="sm">
-          Johndev Simulasi
-        </TextStyle>
-        <TextStyle
-          color={Colors.NEUTRAL_40}
-          size="xs"
-          className="contact-number"
-        >
-          +62 897 8891 2323
-        </TextStyle>
-      </DetailWrapper>
+    <CardWrapper>
+      <Content onClick={onClick}>
+        <Image width="60" height="60" src="/avatar.jpg" alt="" />
+        <DetailWrapper>
+          <TextStyle weight="bold" size="sm">
+            Johndev Simulasi
+          </TextStyle>
+          <TextStyle
+            color={Colors.NEUTRAL_40}
+            size="xs"
+            className="contact-number"
+          >
+            +62 897 8891 2323
+          </TextStyle>
+        </DetailWrapper>
+      </Content>
       <ActionWrapper>
         {isFavorite ? (
-          <Icon name="star-solid" className="contact-favorite" />
+          <CircleButton
+            icon="star-solid"
+            shadow={false}
+            size="sm"
+            color={Colors.SECONDARY_10}
+            onClick={onClickFav}
+          />
         ) : (
-          <Icon name="star-solid" className="contact-regular" />
+          <CircleButton
+            icon="star-solid"
+            shadow={false}
+            size="sm"
+            color={Colors.NEUTRAL_30}
+            onClick={onClickFav}
+          />
         )}
       </ActionWrapper>
     </CardWrapper>
@@ -44,23 +56,26 @@ const CardList = ({ isFavorite = false, onClick, onClickFav }: Props) => {
 export default CardList;
 
 const CardWrapper = styled.div({
+  position: "relative",
   padding: "10px 5px",
-
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  gap: "20px",
 
   borderBottom: "1px solid var(--neutral-20)",
   borderRadius: "var(--radius-sm)",
   transition: "var(--transition)",
 
-  "& > img": {
-    borderRadius: "100%",
-  },
-
   "&:hover": {
     boxShadow: `var(--shadow-sm)`,
+  },
+});
+
+const Content = styled.div({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: "20px",
+
+  "& > img": {
+    borderRadius: "100%",
   },
 });
 
@@ -73,21 +88,8 @@ const DetailWrapper = styled.div({
 });
 
 const ActionWrapper = styled.div({
-  "& .contact-favorite, .contact-regular": {
-    cursor: "pointer",
-    opacity: 0.8,
-    transition: "var(--transition)",
-
-    "&:hover": {
-      opacity: 1,
-    },
-  },
-
-  "& .contact-favorite": {
-    color: "var(--secondary-10)",
-  },
-
-  "& .contact-regular": {
-    color: "var(--neutral-30)",
-  },
+  position: "absolute",
+  top: "50%",
+  right: "5px",
+  transform: "translateY(-50%)",
 });

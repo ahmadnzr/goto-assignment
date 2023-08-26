@@ -1,22 +1,53 @@
-import React from "react";
-import Navbar from "../Navbar";
-import { Colors, InputSearch, TextStyle } from "@/components/atoms";
-import styled from "@emotion/styled";
-import ContentWrapper from "@/container/ContentWrapper";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import styled from "@emotion/styled";
+
+import { Colors, InputSearch, TextStyle } from "@/components/atoms";
+import ContentWrapper from "@/container/ContentWrapper";
+import Navbar from "../Navbar";
 
 const TopContent = () => {
   const router = useRouter();
+  const [showMenu, setShowmenu] = useState(false);
   return (
     <Wrapper>
       <ContentWrapper>
         <Content>
           <Navbar
             steps={[]}
-            leftIcon="bar-3"
+            leftIcon="adjust"
             rightIcon="plus"
-            onClickNavLeft={() => {}}
-            onClickNavRight={() => router.push("/add-contact")}
+            onClickNavLeft={() => {
+              setShowmenu((prev) => !prev);
+            }}
+            onClickNavRight={() => router.push("/contact/add")}
+            listMenu1={[
+              {
+                label: "All Contact",
+                icon: "list",
+                iconColor: Colors.NEUTRAL_40,
+                onClick: () => {
+                  setShowmenu(false);
+                },
+              },
+              {
+                label: "Favorite",
+                icon: "star-solid",
+                iconColor: Colors.SECONDARY_10,
+                onClick: () => {
+                  setShowmenu(false);
+                },
+              },
+              {
+                label: "Regular",
+                icon: "star-solid",
+                iconColor: Colors.NEUTRAL_30,
+                onClick: () => {
+                  setShowmenu(false);
+                },
+              },
+            ]}
+            showMenu1={showMenu}
           >
             <TextStyle size="lg" weight="bold" color={Colors.PRIMARY_10}>
               Contact

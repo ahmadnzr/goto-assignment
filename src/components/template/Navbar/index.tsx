@@ -3,9 +3,7 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-import TextStyle from "@/components/atoms/TextStyle";
-import CircleButton from "@/components/atoms/CircleButton";
-import { Colors } from "@/components/atoms";
+import CircleButton, { ListMenu } from "@/components/atoms/CircleButton";
 import { IconName } from "@/components/atoms/Icon";
 
 interface Props {
@@ -16,6 +14,10 @@ interface Props {
   rightIcon?: IconName;
   onClickNavLeft?: () => void;
   onClickNavRight?: () => void;
+  listMenu1?: ListMenu[];
+  listMenu2?: ListMenu[];
+  showMenu1?: boolean;
+  showMenu2?: boolean;
 }
 
 const Navbar = ({
@@ -26,16 +28,33 @@ const Navbar = ({
   leftIcon,
   rightIcon,
   leftTitle = false,
+  listMenu1,
+  listMenu2,
+  showMenu1,
+  showMenu2,
 }: Props) => {
   return (
     <NavbarContainer leftTitle={leftTitle}>
       {steps.length > 1 ? (
         <CircleButton icon="chevron-left" onClick={onClickNavLeft} />
       ) : (
-        <CircleButton icon={leftIcon} onClick={onClickNavLeft} />
+        <CircleButton
+          icon={leftIcon}
+          onClick={onClickNavLeft}
+          listMenu={listMenu1}
+          showMenu={showMenu1}
+        />
       )}
       <div className="title">{children}</div>
-      {rightIcon && <CircleButton icon={rightIcon} onClick={onClickNavRight} />}
+      {rightIcon && (
+        <CircleButton
+          icon={rightIcon}
+          onClick={onClickNavRight}
+          listMenu={listMenu2}
+          showMenu={showMenu2}
+          menuPosition="right"
+        />
+      )}
     </NavbarContainer>
   );
 };

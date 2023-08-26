@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
 import React from "react";
-import { CircleButton, Colors, Icon, TextStyle } from "..";
+import styled from "@emotion/styled";
+import { CircleButton, Colors, TextStyle } from "..";
 
 interface Props {
   name: string;
@@ -9,6 +9,7 @@ interface Props {
   placeholder?: string;
   onChange?: () => void;
   deleteAble?: boolean;
+  className?: string;
 }
 
 const Input = ({
@@ -18,31 +19,48 @@ const Input = ({
   onChange,
   placeholder,
   deleteAble = false,
+  className = "",
 }: Props) => {
   return (
-    <InputContainer>
-      <CInput error={error} type="text" placeholder={placeholder} />
+    <Container className={className}>
+      <InputContainer>
+        <CInput
+          name={name}
+          value={value}
+          error={error}
+          type="text"
+          placeholder={placeholder}
+          onChange={onChange}
+        />
+        {deleteAble && (
+          <IconContainer>
+            <CircleButton
+              size="sm"
+              icon="x-mark"
+              color={Colors.ERROR}
+              bgColor={Colors.NEUTRAL_20}
+              shadow={false}
+            />
+          </IconContainer>
+        )}
+      </InputContainer>
       {error && (
         <TextStyle size="xxs" color={Colors.ERROR} className="input-error">
           * {error}
         </TextStyle>
       )}
-      {deleteAble && (
-        <IconContainer>
-          <CircleButton
-            size="sm"
-            icon="x-mark"
-            color={Colors.ERROR}
-            bgColor={Colors.NEUTRAL_20}
-            shadow={false}
-          />
-        </IconContainer>
-      )}
-    </InputContainer>
+    </Container>
   );
 };
 
 export default Input;
+
+const Container = styled.div`
+  position: relative;
+  ${"& .input-error"} {
+    margin-top: 2px;
+  }
+`;
 
 const InputContainer = styled.div`
   position: relative;

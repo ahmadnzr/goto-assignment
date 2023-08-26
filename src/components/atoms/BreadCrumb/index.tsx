@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Colors, TextStyle } from "..";
 import styled from "@emotion/styled";
+import { Colors, TextStyle } from "..";
 
 interface Props {
   steps: string[];
