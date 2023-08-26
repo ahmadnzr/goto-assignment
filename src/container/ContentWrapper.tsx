@@ -2,14 +2,24 @@
 
 import React from "react";
 import styled from "@emotion/styled";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 interface Props {
   children: React.ReactNode;
   padding?: string;
 }
 
+const client = new ApolloClient({
+  uri: "https://wpe-hiring.tokopedia.net/graphql",
+  cache: new InMemoryCache(),
+});
+
 const ContentWrapper = ({ children, padding = "0px" }: Props) => {
-  return <Wrapper padding={padding}>{children}</Wrapper>;
+  return (
+    <ApolloProvider client={client}>
+      <Wrapper padding={padding}>{children}</Wrapper>
+    </ApolloProvider>
+  );
 };
 
 const Wrapper = styled.div`
