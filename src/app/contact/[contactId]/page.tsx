@@ -1,17 +1,18 @@
 "use client";
+import React, { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import styled from "@emotion/styled";
 
 import { Button, Colors, TextStyle } from "@/components/atoms";
 import Navbar from "@/components/template/Navbar";
-import styled from "@emotion/styled";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
 
 type tabValue = 0 | 1;
 
 const DetailContact = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<tabValue>(0);
+  const [showMenu, setShowmenu] = useState(false);
 
   const handleSetActiveTab = (tab: tabValue) => {
     setActiveTab(tab);
@@ -22,8 +23,40 @@ const DetailContact = () => {
       <Navbar
         steps={["1", "2"]}
         rightIcon="ellipse-vertical"
-        onClickNavRight={() => {}}
+        onClickNavRight={() => {
+          setShowmenu((prev) => !prev);
+        }}
         onClickNavLeft={() => router.push("/")}
+        listMenu2={[
+          {
+            label: "Edit",
+            icon: "pencil",
+            iconColor: Colors.NEUTRAL_40,
+            onClick: () => {
+              setShowmenu(false);
+              router.push("/contact/2/edit")
+            },
+          },
+          {
+            label: "Delete",
+            icon: "trash",
+            iconColor: Colors.ERROR,
+            onClick: () => {
+              console.log("delete");
+              setShowmenu(false);
+            },
+          },
+          {
+            label: "Favorite",
+            icon: "star-solid",
+            iconColor: Colors.SECONDARY_10,
+            onClick: () => {
+              console.log("favorite");
+              setShowmenu(false);
+            },
+          },
+        ]}
+        showMenu2={showMenu}
       />
       <TopDetailWrapper>
         <Image width="90" height="90" src="/avatar.jpg" alt="" />

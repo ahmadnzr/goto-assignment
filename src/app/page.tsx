@@ -10,7 +10,7 @@ import TopContent from "@/components/template/Home/TopContent";
 const Home = () => {
   const router = useRouter();
   const handleClickCard = () => {
-    router.push("detail-contact");
+    router.push("/contact/2");
   };
   return (
     <div>
