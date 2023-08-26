@@ -7,7 +7,7 @@ import { ColorValues, Colors, TextStyle } from "..";
 
 interface CButtonProps {
   type: "primary" | "base";
-  size: "sm" | "md";
+  size: "sm" | "md" | "xs";
   shadow: boolean;
   bgColor: ColorValues;
 }
@@ -16,6 +16,7 @@ export type ListMenu = {
   icon: IconName;
   iconColor: ColorValues;
   label: string;
+  selected?: boolean;
   onClick: () => void;
 };
 
@@ -71,6 +72,14 @@ const CircleButton = ({
                 <Menu key={i} onClick={item.onClick}>
                   <Icon name={item.icon} size="lg" color={item.iconColor} />
                   <TextStyle size="xs">{item.label}</TextStyle>
+                  {item.selected && (
+                    <Icon
+                      name="check"
+                      size="sm"
+                      color={Colors.PRIMARY_10}
+                      className="check"
+                    />
+                  )}
                 </Menu>
               ))}
             </MenuList>,
@@ -106,8 +115,8 @@ const CButton = styled.div(
     },
   },
   ({ type, size, shadow, bgColor }: CButtonProps) => ({
-    height: size === "sm" ? "30px" : "40px",
-    width: size === "sm" ? "30px" : "40px",
+    height: size === "sm" ? "30px" : size === "xs" ? "14px" : "40px",
+    width: size === "sm" ? "30px" : size == "xs" ? "14px" : "40px",
     backgroundColor:
       type === "primary" ? `var(--primary-10)` : `var(--${bgColor})`,
     boxShadow: shadow ? `var(--shadow-sm)` : "none",
@@ -132,6 +141,7 @@ const MenuList = styled.div`
 `;
 
 const Menu = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -141,5 +151,11 @@ const Menu = styled.div`
 
   ${"&:hover"} {
     background-color: var(--neutral-20);
+  }
+  ${"& .check"} {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 `;

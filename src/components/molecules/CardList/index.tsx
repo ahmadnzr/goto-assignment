@@ -10,23 +10,24 @@ interface Props {
   isFavorite?: boolean;
   onClick: () => void;
   onClickFav: () => void;
+  item: { label: string; subLabel: string };
 }
 
-const CardList = ({ isFavorite = false, onClick, onClickFav }: Props) => {
+const CardList = ({ isFavorite = false, onClick, onClickFav, item }: Props) => {
   return (
     <CardWrapper>
       <Content onClick={onClick}>
         <Image width="60" height="60" src="/avatar.jpg" alt="" />
         <DetailWrapper>
           <TextStyle weight="bold" size="sm">
-            Johndev Simulasi
+            {item?.label || "-"}
           </TextStyle>
           <TextStyle
             color={Colors.NEUTRAL_40}
             size="xs"
             className="contact-number"
           >
-            +62 897 8891 2323
+            {item?.subLabel || "-"}
           </TextStyle>
         </DetailWrapper>
       </Content>

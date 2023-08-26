@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 
 interface ButtonType {
-  variant: "contained" | "text";
+  variant: "contained" | "text" | "ghost";
 }
 
 interface Props extends Partial<ButtonType> {
@@ -36,15 +36,22 @@ const Button = ({
 
 export default Button;
 
-const CButton = styled.button`
-  padding: ${(props: ButtonType) =>
-    props.variant === "text" ? "0" : "10px 20px"};
-  border: none;
-  background-color: ${(props: ButtonType) =>
-    props.variant === "text" ? "transparent" : "var(--primary-10)"};
-  color: ${(props: ButtonType) =>
-    props.variant === "text" ? "var(--primary-10)" : "var(--neutral-10)"};
-  font-weight: 700;
-  cursor: pointer;
-  border-radius: var(--radius-md);
-`;
+const CButton = styled.button(
+  {
+    border: "none",
+    fontWeight: 700,
+    borderRadius: "var(--radius-md)",
+    cursor: "pointer",
+    transition: "var(--transition)",
+
+    "&:hover": {
+      opacity: 0.8,
+    },
+  },
+  ({ variant }: ButtonType) => ({
+    padding: variant === "text" ? "0" : "10px 20px",
+    backgroundColor:
+      variant === "contained" ? "var(--primary-10)" : "var(--neutral-10)",
+    color: variant === "contained" ? "var(--neutral-10)" : "var(--primary-10)",
+  })
+);

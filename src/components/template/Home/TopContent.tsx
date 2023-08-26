@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, useState } from "react";
 import { useRouter } from "next/navigation";
 import styled from "@emotion/styled";
 
@@ -6,7 +6,13 @@ import { Colors, InputSearch, TextStyle } from "@/components/atoms";
 import ContentWrapper from "@/container/ContentWrapper";
 import Navbar from "../Navbar";
 
-const TopContent = () => {
+export type Filter = "all" | "fav" | "reg";
+interface Props {
+  filter: Filter;
+  setFilter: Dispatch<React.SetStateAction<Filter>>;
+}
+
+const TopContent = ({ filter, setFilter }: Props) => {
   const router = useRouter();
   const [showMenu, setShowmenu] = useState(false);
   return (
@@ -26,24 +32,30 @@ const TopContent = () => {
                 label: "All Contact",
                 icon: "list",
                 iconColor: Colors.NEUTRAL_40,
+                selected: filter === "all",
                 onClick: () => {
                   setShowmenu(false);
+                  setFilter("all");
                 },
               },
               {
                 label: "Favorite",
                 icon: "star-solid",
                 iconColor: Colors.SECONDARY_10,
+                selected: filter === "fav",
                 onClick: () => {
                   setShowmenu(false);
+                  setFilter("fav");
                 },
               },
               {
                 label: "Regular",
                 icon: "star-solid",
+                selected: filter === "reg",
                 iconColor: Colors.NEUTRAL_30,
                 onClick: () => {
                   setShowmenu(false);
+                  setFilter("reg");
                 },
               },
             ]}
@@ -67,7 +79,7 @@ const Wrapper = styled.div`
   top: 0;
   left: 0;
   right: 0;
-  z-index: 99;
+  z-index: 9;
   height: var(--floating-top-home);
   background-color: var(--neutral-10);
   padding-bottom: 6px;

@@ -6,6 +6,7 @@ type ColorKeys =
   | "NEUTRAL_30"
   | "NEUTRAL_40"
   | "NEUTRAL_50"
+  | "SUCCESS"
   | "ERROR";
 
 export type ColorValues =
@@ -16,6 +17,7 @@ export type ColorValues =
   | "neutral-30"
   | "neutral-40"
   | "neutral-50"
+  | "success"
   | "error";
 
 export const Colors: Record<ColorKeys, ColorValues> = {
@@ -26,5 +28,6 @@ export const Colors: Record<ColorKeys, ColorValues> = {
   NEUTRAL_30: "neutral-30",
   NEUTRAL_40: "neutral-40",
   NEUTRAL_50: "neutral-50",
+  SUCCESS: "success",
   ERROR: "error",
 };

@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 import {
   AdjustmentsVerticalIcon,
   Bars3Icon,
+  CheckIcon,
   ChevronLeftIcon,
   EllipsisHorizontalIcon,
   EllipsisVerticalIcon,
@@ -30,6 +31,7 @@ export type IconName =
   | "pencil"
   | "list"
   | "adjust"
+  | "check"
   | "ellipse-vertical";
 
 interface IconProps {
@@ -128,6 +130,12 @@ const Icon = ({
       return (
         <IconContainer color={color} size={size}>
           <AdjustmentsVerticalIcon style={iconStyle} className={className} />
+        </IconContainer>
+      );
+    case "check":
+      return (
+        <IconContainer color={color} size={size}>
+          <CheckIcon style={iconStyle} className={className} />
         </IconContainer>
       );
   }
