@@ -44,16 +44,16 @@ const CardList = ({ isFavorite = false, onClick, onClickFav, item }: Props) => {
         {isFavorite ? (
           <CircleButton
             icon="star-solid"
-            shadow={false}
-            size="sm"
+            // shadow={false}
+            size="md"
             color={Colors.SECONDARY_10}
             onClick={onClickFav}
           />
         ) : (
           <CircleButton
             icon="star-solid"
-            shadow={false}
-            size="sm"
+            // shadow={false}
+            size="md"
             color={Colors.NEUTRAL_30}
             onClick={onClickFav}
           />

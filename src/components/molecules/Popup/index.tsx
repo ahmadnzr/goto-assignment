@@ -3,14 +3,12 @@ import ReactDOM from "react-dom";
 import styled from "@emotion/styled";
 
 import { Button, TextStyle } from "@/components/atoms";
+import { PopupProps } from "@/helper/types";
 
 type PopupType = "info" | "action";
 
-interface Props {
-  title: string;
-  desc?: string;
+interface Props extends Partial<PopupProps> {
   type?: PopupType;
-  open: boolean;
   handleCloseBtn?: () => void;
   handleYesBtn?: () => void;
 }

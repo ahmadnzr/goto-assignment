@@ -46,96 +46,102 @@ interface Props extends Partial<IconProps> {
   className?: string;
 }
 
+const getIconSize = {
+  sm: { height: "12px", width: "12px" },
+  md: { height: "16px", width: "16px" },
+  lg: { height: "22", width: "22" },
+};
+
 const Icon = ({
   name,
   className = "",
   color = Colors.NEUTRAL_30,
-  size = "lg",
+  size = "md",
 }: Props) => {
-  const iconStyle = { height: "24px", width: "24px" };
+  const iconStyle = getIconSize[size];
   switch (name) {
     case "plus":
       return (
-        <IconContainer color={color} size={size}>
-          <PlusIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <PlusIcon style={iconStyle} />
         </IconContainer>
       );
     case "ellipse-horizontal":
       return (
-        <IconContainer color={color} size={size}>
-          <EllipsisHorizontalIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <EllipsisHorizontalIcon style={iconStyle} />
         </IconContainer>
       );
     case "bar-3":
       return (
-        <IconContainer color={color} size={size}>
-          <Bars3Icon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <Bars3Icon style={iconStyle} />
         </IconContainer>
       );
     case "search":
       return (
-        <IconContainer color={color} size={size}>
-          <MagnifyingGlassIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <MagnifyingGlassIcon style={iconStyle} />
         </IconContainer>
       );
     case "star-outlined":
       return (
-        <IconContainer color={color} size={size}>
-          <StarIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <StarIcon style={iconStyle} />
         </IconContainer>
       );
     case "star-solid":
       return (
-        <IconContainer color={color} size={size}>
-          <StarIconSolid style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <StarIconSolid style={iconStyle} />
         </IconContainer>
       );
     case "chevron-left":
       return (
-        <IconContainer color={color} size={size}>
-          <ChevronLeftIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <ChevronLeftIcon style={iconStyle} />
         </IconContainer>
       );
     case "ellipse-vertical":
       return (
-        <IconContainer color={color} size={size}>
-          <EllipsisVerticalIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <EllipsisVerticalIcon style={iconStyle} />
         </IconContainer>
       );
     case "x-mark":
       return (
-        <IconContainer color={color} size={size}>
-          <XMarkIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <XMarkIcon style={iconStyle} />
         </IconContainer>
       );
     case "trash":
       return (
-        <IconContainer color={color} size={size}>
-          <TrashIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <TrashIcon style={iconStyle} />
         </IconContainer>
       );
     case "pencil":
       return (
-        <IconContainer color={color} size={size}>
-          <PencilSquareIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <PencilSquareIcon style={iconStyle} />
         </IconContainer>
       );
     case "list":
       return (
-        <IconContainer color={color} size={size}>
-          <ListBulletIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <ListBulletIcon style={iconStyle} />
         </IconContainer>
       );
     case "adjust":
       return (
-        <IconContainer color={color} size={size}>
-          <AdjustmentsVerticalIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <AdjustmentsVerticalIcon style={iconStyle} />
         </IconContainer>
       );
     case "check":
       return (
-        <IconContainer color={color} size={size}>
-          <CheckIcon style={iconStyle} className={className} />
+        <IconContainer color={color} size={size} className={className}>
+          <CheckIcon style={iconStyle} />
         </IconContainer>
       );
   }
@@ -146,5 +152,8 @@ export default Icon;
 const IconContainer = styled.div({}, ({ size, color }: IconProps) => ({
   height: size === "sm" ? "14px" : size === "md" ? "18px" : "24px",
   width: size === "sm" ? "14px" : size === "md" ? "18px" : "24px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
   color: `var(--${color})`,
 }));
