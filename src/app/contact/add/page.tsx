@@ -10,13 +10,7 @@ import { Button, Colors, Input, Loading, Popup, TextStyle } from "@/components";
 import Navbar from "@/components/template/Navbar";
 
 import { ADD_CONTACT_WITH_PHONE } from "@/helper/queries/create-contact";
-import { PopupProps } from "@/helper/types";
-
-type InputField = {
-  lastname: string;
-  firstname: string;
-  [key: string]: string;
-};
+import { InputField, PopupProps } from "@/helper/types";
 
 const AddContact = () => {
   const router = useRouter();

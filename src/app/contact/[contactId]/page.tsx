@@ -95,7 +95,7 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
             iconColor: Colors.NEUTRAL_40,
             onClick: () => {
               setShowmenu(false);
-              router.push("/contact/2/edit");
+              router.push(`/contact/${contact?.id}/edit`);
             },
           },
           {
