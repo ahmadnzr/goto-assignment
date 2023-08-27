@@ -24,7 +24,7 @@ const useContactDetailHook = ({ contactId }: Props): ContactListResponse => {
 
   useEffect(() => {
     const favIds = getLocalStorage<number[] | null>("FAVORITE") || [];
-    if (data && favIds.includes(data.contact_by_pk.id)) {
+    if (data && favIds.includes(data?.contact_by_pk?.id)) {
       setFav(true);
     }
   }, [data]);
