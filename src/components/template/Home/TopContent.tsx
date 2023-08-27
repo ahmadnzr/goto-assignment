@@ -3,8 +3,8 @@ import { useRouter } from "next/navigation";
 import styled from "@emotion/styled";
 
 import { Colors, InputSearch, TextStyle } from "@/components/atoms";
-import ContentWrapper from "@/container/ContentWrapper";
 import Navbar from "../Navbar";
+import ContentWrapper from "@/container/ContentWrapper";
 
 export type Filter = "all" | "fav" | "reg";
 interface Props {
@@ -15,6 +15,8 @@ interface Props {
 const TopContent = ({ filter, setFilter }: Props) => {
   const router = useRouter();
   const [showMenu, setShowmenu] = useState(false);
+  const [search, setSearch] = useState("");
+
   return (
     <Wrapper>
       <ContentWrapper>
@@ -65,7 +67,11 @@ const TopContent = ({ filter, setFilter }: Props) => {
               Contact
             </TextStyle>
           </Navbar>
-          <InputSearch />
+          <InputSearch
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onReset={() => setSearch("")}
+          />
         </Content>
       </ContentWrapper>
     </Wrapper>

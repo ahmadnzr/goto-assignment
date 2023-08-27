@@ -5,7 +5,13 @@ import styled from "@emotion/styled";
 
 import CircleButton from "../CircleButton";
 
-const InputSearch = () => {
+interface Props {
+  value: string;
+  onChange: () => void;
+  onReset: () => void;
+}
+
+const InputSearch = ({ value, onChange, onReset }: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchFocus, setSearchFocus] = useState(false);
 
@@ -14,12 +20,18 @@ const InputSearch = () => {
       <Input
         type="text"
         placeholder="Search..."
+        value={value}
         ref={inputRef}
         onFocus={() => setSearchFocus(true)}
         onBlur={() => setSearchFocus(false)}
+        onChange={onChange}
       />
       <IconContainer>
-        <CircleButton icon="search" type="primary" />
+        {value?.length ? (
+          <CircleButton icon="x-mark" type="primary" onClick={onReset} />
+        ) : (
+          <CircleButton icon="search" type="primary" />
+        )}
       </IconContainer>
     </Container>
   );

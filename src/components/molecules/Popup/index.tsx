@@ -11,8 +11,8 @@ interface Props {
   desc?: string;
   type?: PopupType;
   open: boolean;
-  handleCloseBtn: () => void;
-  handleYesBtn: () => void;
+  handleCloseBtn?: () => void;
+  handleYesBtn?: () => void;
 }
 
 const Popup = ({
