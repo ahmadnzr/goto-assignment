@@ -18,6 +18,7 @@ interface Props<T extends FieldValues, Y extends Path<T>> {
   fieldName: Y;
   options?: RegisterOptions;
   onDeleteField?: () => void;
+  defaultValue?: string;
 }
 
 const Input = <T extends FieldValues, Y extends Path<T>>({
@@ -29,6 +30,7 @@ const Input = <T extends FieldValues, Y extends Path<T>>({
   fieldName,
   options,
   onDeleteField,
+  defaultValue = "",
 }: Props<T, Y>) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const key = e.key;
@@ -39,7 +41,9 @@ const Input = <T extends FieldValues, Y extends Path<T>>({
       !pattern.test(key) &&
       key !== "Backspace" &&
       key !== "Enter" &&
-      key !== "Tab"
+      key !== "Tab" &&
+      key !== "ArrowRight" &&
+      key !== "ArrowLeft"
     ) {
       e.preventDefault();
     }
@@ -50,6 +54,7 @@ const Input = <T extends FieldValues, Y extends Path<T>>({
         <CInput
           error={error}
           type="text"
+          defaultValue={defaultValue}
           placeholder={placeholder}
           {...register(fieldName, options)}
           onKeyDown={handleKeyDown}
