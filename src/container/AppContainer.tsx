@@ -1,72 +1,45 @@
 "use client";
 
-import React, { createContext, useEffect, useState } from "react";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
-import { Popup } from "@/components";
+import React from "react";
+import {
+  ApolloClient,
+  ApolloLink,
+  ApolloProvider,
+  InMemoryCache,
+  createHttpLink,
+} from "@apollo/client";
+import { onError } from "@apollo/client/link/error";
 
 interface Props {
   children: React.ReactNode;
   padding?: string;
 }
 
-interface Error {
-  isError: boolean;
-  title: string;
-  desc?: string;
-}
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.forEach(({ message, locations, path }) => {
+      console.error(`GraphQL Error: ${message}`);
+    });
+  }
 
-interface AppCtx {
-  globalError: Error | null;
-  setGlobalError: (err: Error) => void;
-}
+  if (networkError) {
+    console.error(`Network Error: ${networkError}`);
+  }
+});
+
+const httpLink = createHttpLink({
+  uri: "https://wpe-hiring.tokopedia.net/graphql",
+});
+
+const combinedLink = ApolloLink.from([errorLink, httpLink]);
 
 const client = new ApolloClient({
-  uri: "https://wpe-hiring.tokopedia.net/graphql",
+  link: combinedLink,
   cache: new InMemoryCache(),
 });
 
-export const AppContext = createContext<AppCtx>({
-  globalError: null,
-  setGlobalError: () => {},
-});
-
-const AppContainer = ({ children, padding = "0px" }: Props) => {
-  const [error, setError] = useState<Error>({
-    title: "",
-    desc: "",
-    isError: false,
-  });
-  const [errPopup, setErrPopup] = useState(false);
-
-  const handleSetGlobalError = (err: Error) => {
-    setError(err);
-    setErrPopup(true);
-  };
-
-  useEffect(() => {
-    if (!error.isError) {
-      setErrPopup(false);
-    }
-  }, [error]);
-  useEffect(() => {
-    console.log(error);
-  }, [error]);
-
-  return (
-    <ApolloProvider client={client}>
-      <AppContext.Provider
-        value={{ globalError: error, setGlobalError: handleSetGlobalError }}
-      >
-        {children}
-        <Popup
-          open={errPopup}
-          title={error.title}
-          desc={error.desc}
-          handleYesBtn={() => setErrPopup(false)}
-        />
-      </AppContext.Provider>
-    </ApolloProvider>
-  );
+const AppContainer = ({ children }: Props) => {
+  return <ApolloProvider client={client}>{children}</ApolloProvider>;
 };
 
 export default AppContainer;

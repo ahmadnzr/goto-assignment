@@ -1,8 +1,8 @@
+import { useEffect } from "react";
 import { ApolloError, useQuery } from "@apollo/client";
-import { CONTACT_LIST } from "../queries/list";
+
 import { getLocalStorage } from "../utils";
-import { useContext, useEffect } from "react";
-import { AppContext } from "@/container/AppContainer";
+import { CONTACT_LIST } from "../queries/list";
 
 export interface ContactApiResponse {
   created_at: Date;
@@ -21,10 +21,9 @@ interface ContactListResponse {
 }
 
 const useContactListHook = (): ContactListResponse => {
-  const { setGlobalError, globalError } = useContext(AppContext);
-  const { data, error, loading } = useQuery<{ contact: ContactApiResponse[] }>(
-    CONTACT_LIST
-  );
+  const { data, error, loading, refetch } = useQuery<{
+    contact: ContactApiResponse[];
+  }>(CONTACT_LIST);
 
   const favIds = getLocalStorage<number[] | null>("FAVORITE") || [];
 
@@ -36,19 +35,8 @@ const useContactListHook = (): ContactListResponse => {
     : [];
 
   useEffect(() => {
-    // setGlobar error when error from query
-    if (error && !loading && !globalError?.isError) {
-      setGlobalError({ title: error.name, desc: error.message, isError: true });
-      return;
-    }
-  }, [error, globalError?.isError, setGlobalError, loading]);
-
-  useEffect(() => {
-    // setGlobal error to false when success request is success
-    if (!error && !loading && globalError?.isError) {
-      setGlobalError({ title: "", desc: "", isError: false });
-    }
-  }, [error, globalError?.isError, loading, setGlobalError]);
+    refetch();
+  }, [refetch]);
 
   return {
     error,

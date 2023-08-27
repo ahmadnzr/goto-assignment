@@ -4,26 +4,40 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import styled from "@emotion/styled";
 
-import { Button, Colors, Loading, TextStyle } from "@/components/atoms";
-import Navbar from "@/components/template/Navbar";
 import useContactDetailHook from "@/helper/hooks/useContactDetailHook";
+
+import { Button, Colors, Icon, Loading, Popup, TextStyle } from "@/components";
+import Navbar from "@/components/template/Navbar";
+import { PopupProps } from "@/helper/types";
 
 type tabValue = 0 | 1;
 
 const DetailContact = ({ params }: { params: { contactId: string } }) => {
-  const { error, loading, contact } = useContactDetailHook({
+  const { error, loading, contact, isFavorite } = useContactDetailHook({
     contactId: parseInt(params.contactId),
   });
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<tabValue>(0);
   const [showMenu, setShowmenu] = useState(false);
+  const [errorPopup, setErrorPopup] = useState<PopupProps>({
+    title: "",
+    desc: "",
+    open: false,
+  });
 
   const handleSetActiveTab = (tab: tabValue) => {
     setActiveTab(tab);
   };
 
+  useEffect(() => {
+    if (error && !loading) {
+      setErrorPopup({ title: error.name, desc: error.message, open: true });
+      return;
+    }
+  }, [error, loading]);
+
   return (
-    <div>
+    <React.Fragment>
       <Loading loading={loading} />
       <Navbar
         steps={["1", "2"]}
@@ -65,6 +79,9 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
       />
       <TopDetailWrapper>
         <Image width="90" height="90" src="/avatar.jpg" alt="" />
+        {isFavorite && (
+          <Icon name="star-solid" color={Colors.SECONDARY_10} className="fav" />
+        )}
         <TextStyle size="sm" weight="bold" className="name">
           {`${contact?.first_name || ""} ${contact?.last_name || "-"}`}
         </TextStyle>
@@ -129,7 +146,13 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
           </TextStyle>
         )}
       </TabContent>
-    </div>
+      <Popup
+        title={errorPopup.title}
+        desc={errorPopup.desc}
+        open={errorPopup.open}
+        handleYesBtn={() => setErrorPopup({ title: "", desc: "", open: false })}
+      />
+    </React.Fragment>
   );
 };
 
@@ -145,6 +168,9 @@ const TopDetailWrapper = styled.div({
   },
   "& .location": {
     marginTop: "5px",
+  },
+  "& .fav": {
+    margin: "0 auto",
   },
 });
 

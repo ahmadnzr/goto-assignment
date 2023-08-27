@@ -1,16 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-
-import { Colors, Loading, TextStyle } from "@/components/atoms";
-import { CardList } from "@/components/molecules";
 import { useRouter } from "next/navigation";
-import TopContent, { Filter } from "@/components/template/Home/TopContent";
+
 import useContactListHook, {
   ContactApiResponse,
 } from "@/helper/hooks/useContactListHook";
-import Popup from "@/components/molecules/Popup";
-import { getLocalStorage, setLocalStorage } from "@/helper/utils";
+
+import { Colors, Loading, TextStyle, CardList, Popup } from "@/components/";
+import TopContent, { Filter } from "@/components/template/Home/TopContent";
+
+import { setLocalStorage } from "@/helper/utils";
+import { PopupProps } from "@/helper/types";
 
 const Home = () => {
   const router = useRouter();
@@ -21,6 +22,11 @@ const Home = () => {
   const [filter, setFilter] = useState<Filter>("all");
   const [selectedContact, setSelectedContact] =
     useState<ContactApiResponse | null>(null);
+  const [errorPopup, setErrorPopup] = useState<PopupProps>({
+    title: "",
+    desc: "",
+    open: false,
+  });
 
   const handleClickCard = (contactId: number) => {
     router.push("/contact/" + contactId);
@@ -42,6 +48,13 @@ const Home = () => {
       setFavPopup(false);
     } catch (error) {}
   };
+
+  useEffect(() => {
+    if (error && !loading) {
+      setErrorPopup({ title: error.name, desc: error.message, open: true });
+      return;
+    }
+  }, [error, loading]);
 
   return (
     <React.Fragment>
@@ -112,6 +125,12 @@ const Home = () => {
         open={regPopup}
         handleCloseBtn={() => setFavPopup(false)}
         handleYesBtn={handleSetFav}
+      />
+      <Popup
+        title={errorPopup.title}
+        desc={errorPopup.desc}
+        open={errorPopup.open}
+        handleYesBtn={() => setErrorPopup({ title: "", desc: "", open: false })}
       />
     </React.Fragment>
   );
