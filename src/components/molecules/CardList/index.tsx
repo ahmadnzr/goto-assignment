@@ -5,12 +5,14 @@ import Image from "next/image";
 import styled from "@emotion/styled";
 
 import { CircleButton, Colors, TextStyle } from "@/components/atoms";
+import { ContactApiResponse } from "@/helper/hooks/useContactListHook";
 
 interface Props {
   isFavorite?: boolean;
+
   onClick: () => void;
   onClickFav: () => void;
-  item: { label: string; subLabel: string };
+  item: ContactApiResponse;
 }
 
 const CardList = ({ isFavorite = false, onClick, onClickFav, item }: Props) => {
@@ -20,15 +22,22 @@ const CardList = ({ isFavorite = false, onClick, onClickFav, item }: Props) => {
         <Image width="60" height="60" src="/avatar.jpg" alt="" />
         <DetailWrapper>
           <TextStyle weight="bold" size="sm">
-            {item?.label || "-"}
+            {`${item.first_name} ${item.last_name}`}
           </TextStyle>
           <TextStyle
             color={Colors.NEUTRAL_40}
             size="xs"
             className="contact-number"
           >
-            {item?.subLabel || "-"}
+            {item.phones[0]?.number || "-"}
           </TextStyle>
+          {item.phones.length > 1 && (
+            <TextStyle color={Colors.NEUTRAL_40} size="xxs">
+              {`${item.phones.length - 1} more ${
+                item.phones.length > 2 ? "numbers" : "number"
+              }`}
+            </TextStyle>
+          )}
         </DetailWrapper>
       </Content>
       <ActionWrapper>
