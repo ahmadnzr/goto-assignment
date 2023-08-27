@@ -10,12 +10,14 @@ import useContactListHook, {
 import { Colors, Loading, TextStyle, CardList, Popup } from "@/components/";
 import TopContent, { Filter } from "@/components/template/Home/TopContent";
 
-import { setLocalStorage } from "@/helper/utils";
+import { getLocalStorage, setLocalStorage } from "@/helper/utils";
 import { PopupProps } from "@/helper/types";
+import Pagination from "@/components/molecules/Pagination";
 
 const Home = () => {
   const router = useRouter();
-  const { error, loading, favorites, regulars, favIds } = useContactListHook();
+
+  const { error, loading, data, favIds } = useContactListHook();
 
   const [favPopup, setFavPopup] = useState(false);
   const [regPopup, setRegPopup] = useState(false);
@@ -27,6 +29,10 @@ const Home = () => {
     desc: "",
     open: false,
   });
+
+  const [page, setPage] = useState(0);
+  const rowsPerPage = 10;
+  const contactList = data.slice(page * 10, (page + 1) * 10);
 
   const handleClickCard = (contactId: number) => {
     router.push("/contact/" + contactId);
@@ -49,6 +55,10 @@ const Home = () => {
     } catch (error) {}
   };
 
+  const handleSetFilter = (filter: Filter) => {
+    setFilter(filter);
+  };
+
   useEffect(() => {
     if (error && !loading) {
       setErrorPopup({ title: error.name, desc: error.message, open: true });
@@ -59,9 +69,18 @@ const Home = () => {
   return (
     <React.Fragment>
       <Loading loading={loading} />
-      <TopContent filter={filter} setFilter={setFilter} />
+      <TopContent filter={filter} setFilter={handleSetFilter} />
       <ListContainer>
-        {favorites.length && ["all", "fav"].includes(filter) ? (
+        <Pagination
+          totalData={data?.length || 0}
+          currentPage={page}
+          rowPerPage={rowsPerPage}
+          onClickPage={(id) => {
+            setPage(id);
+          }}
+        />
+        {contactList.filter((item) => item.isFav).length &&
+        ["all", "fav"].includes(filter) ? (
           <GroupContact>
             <TextStyle
               className="group-title"
@@ -72,22 +91,25 @@ const Home = () => {
             </TextStyle>
 
             <ContactList>
-              {favorites.map((item, i) => (
-                <CardList
-                  key={i}
-                  isFavorite
-                  item={item}
-                  onClick={() => handleClickCard(item.id)}
-                  onClickFav={() => {
-                    setFavPopup(true);
-                    setSelectedContact(item);
-                  }}
-                />
-              ))}
+              {contactList
+                .filter((item) => item.isFav)
+                .map((item, i) => (
+                  <CardList
+                    key={i}
+                    isFavorite={item.isFav}
+                    item={item}
+                    onClick={() => handleClickCard(item.id)}
+                    onClickFav={() => {
+                      setFavPopup(true);
+                      setSelectedContact(item);
+                    }}
+                  />
+                ))}
             </ContactList>
           </GroupContact>
         ) : null}
-        {regulars.length && ["all", "reg"].includes(filter) ? (
+        {contactList.filter((item) => !item.isFav).length &&
+        ["all", "reg"].includes(filter) ? (
           <GroupContact>
             <TextStyle
               className="group-title"
@@ -97,17 +119,20 @@ const Home = () => {
               Regular Contacts
             </TextStyle>
             <ContactList>
-              {regulars.map((item, i) => (
-                <CardList
-                  key={i}
-                  item={item}
-                  onClick={() => handleClickCard(item.id)}
-                  onClickFav={() => {
-                    setRegPopup(true);
-                    setSelectedContact(item);
-                  }}
-                />
-              ))}
+              {contactList
+                .filter((item) => !item.isFav)
+                .map((item, i) => (
+                  <CardList
+                    key={i}
+                    item={item}
+                    isFavorite={item.isFav}
+                    onClick={() => handleClickCard(item.id)}
+                    onClickFav={() => {
+                      setRegPopup(true);
+                      setSelectedContact(item);
+                    }}
+                  />
+                ))}
             </ContactList>
           </GroupContact>
         ) : null}

@@ -10,13 +10,13 @@ export interface ContactApiResponse {
   id: number;
   last_name: string;
   phones: { number: string }[];
+  isFav?: boolean;
 }
 
 interface ContactListResponse {
   error?: ApolloError;
   loading: boolean;
-  favorites: ContactApiResponse[] | [];
-  regulars: ContactApiResponse[] | [];
+  data: ContactApiResponse[];
   favIds: number[];
 }
 
@@ -27,11 +27,11 @@ const useContactListHook = (): ContactListResponse => {
 
   const favIds = getLocalStorage<number[] | null>("FAVORITE") || [];
 
-  const favorites = data
-    ? data?.contact?.filter((item) => favIds?.includes(item.id))
-    : [];
-  const regulars = data
-    ? data?.contact?.filter((item) => !favIds?.includes(item.id))
+  const contactList = data
+    ? data?.contact.map((item) => ({
+        ...item,
+        isFav: favIds.includes(item.id),
+      }))
     : [];
 
   useEffect(() => {
@@ -41,8 +41,7 @@ const useContactListHook = (): ContactListResponse => {
   return {
     error,
     loading,
-    favorites,
-    regulars,
+    data: contactList,
     favIds,
   };
 };

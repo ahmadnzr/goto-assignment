@@ -9,7 +9,7 @@ import ContentWrapper from "@/container/ContentWrapper";
 export type Filter = "all" | "fav" | "reg";
 interface Props {
   filter: Filter;
-  setFilter: Dispatch<React.SetStateAction<Filter>>;
+  setFilter: (filter: Filter) => void;
 }
 
 const TopContent = ({ filter, setFilter }: Props) => {
