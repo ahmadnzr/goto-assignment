@@ -9,6 +9,8 @@ import useContactDetailHook from "@/helper/hooks/useContactDetailHook";
 import { Button, Colors, Icon, Loading, Popup, TextStyle } from "@/components";
 import Navbar from "@/components/template/Navbar";
 import { PopupProps } from "@/helper/types";
+import { getLocalStorage, setLocalStorage } from "@/helper/utils";
+import { ListMenu } from "@/components/atoms/CircleButton";
 
 type tabValue = 0 | 1;
 
@@ -25,8 +27,31 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
     open: false,
   });
 
+  const favIds = getLocalStorage<number[] | null>("FAVORITE") || [];
+  const [favPopup, setFavPopup] = useState(false);
+  const [regPopup, setRegPopup] = useState(false);
+
   const handleSetActiveTab = (tab: tabValue) => {
     setActiveTab(tab);
+  };
+
+  const handleSetFav = () => {
+    try {
+      setLocalStorage("FAVORITE", [...favIds, parseInt(params.contactId)]);
+
+      router.refresh();
+      setFavPopup(false);
+    } catch (error) {}
+  };
+
+  const handleSetRegular = () => {
+    try {
+      const favorites = favIds.filter(
+        (item) => item !== parseInt(params.contactId)
+      );
+      setLocalStorage("FAVORITE", favorites);
+      setRegPopup(false);
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -65,15 +90,29 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
               setShowmenu(false);
             },
           },
-          {
-            label: "Favorite",
-            icon: "star-solid",
-            iconColor: Colors.SECONDARY_10,
-            onClick: () => {
-              console.log("favorite");
-              setShowmenu(false);
-            },
-          },
+          ...(isFavorite
+            ? ([
+                {
+                  label: "Set Regular",
+                  icon: "star-solid",
+                  iconColor: Colors.NEUTRAL_30,
+                  onClick: () => {
+                    setRegPopup(true);
+                    setShowmenu(false);
+                  },
+                },
+              ] as ListMenu[])
+            : ([
+                {
+                  label: "Set Favorite",
+                  icon: "star-solid",
+                  iconColor: Colors.SECONDARY_10,
+                  onClick: () => {
+                    setFavPopup(true);
+                    setShowmenu(false);
+                  },
+                },
+              ] as ListMenu[])),
         ]}
         showMenu2={showMenu}
       />
@@ -151,6 +190,21 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
         desc={errorPopup.desc}
         open={errorPopup.open}
         handleYesBtn={() => setErrorPopup({ title: "", desc: "", open: false })}
+      />
+      <Popup
+        title="Contact added successfully"
+        desc={`${contact?.first_name} successfully added to list favorites.`}
+        open={favPopup}
+        handleCloseBtn={() => setFavPopup(false)}
+        handleYesBtn={handleSetFav}
+      />
+      <Popup
+        title="Remove this contact from favorites ?"
+        desc={`${contact?.first_name} will be marked as a regular contact.`}
+        open={regPopup}
+        type="action"
+        handleCloseBtn={() => setRegPopup(false)}
+        handleYesBtn={handleSetRegular}
       />
     </React.Fragment>
   );
