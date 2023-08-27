@@ -11,6 +11,8 @@ import Navbar from "@/components/template/Navbar";
 import { PopupProps } from "@/helper/types";
 import { getLocalStorage, setLocalStorage } from "@/helper/utils";
 import { ListMenu } from "@/components/atoms/CircleButton";
+import { ApolloError, useMutation } from "@apollo/client";
+import { DELETE_CONTACT } from "@/helper/queries/delete-contact";
 
 type tabValue = 0 | 1;
 
@@ -18,7 +20,11 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
   const { error, loading, contact, isFavorite } = useContactDetailHook({
     contactId: parseInt(params.contactId),
   });
+  const [deleteContact, { loading: loadingDelete }] =
+    useMutation(DELETE_CONTACT);
+
   const router = useRouter();
+
   const [activeTab, setActiveTab] = useState<tabValue>(0);
   const [showMenu, setShowmenu] = useState(false);
   const [errorPopup, setErrorPopup] = useState<PopupProps>({
@@ -26,6 +32,7 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
     desc: "",
     open: false,
   });
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const favIds = getLocalStorage<number[] | null>("FAVORITE") || [];
   const [favPopup, setFavPopup] = useState(false);
@@ -37,18 +44,28 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
 
   const handleSetFav = () => {
     try {
-      setLocalStorage("FAVORITE", [...favIds, parseInt(params.contactId)]);
+      setLocalStorage("FAVORITE", [...favIds, contact?.id]);
 
       router.refresh();
       setFavPopup(false);
     } catch (error) {}
   };
 
+  const handleDelete = () => {
+    deleteContact({ variables: { id: contact?.id } })
+      .then(() => {
+        setErrorPopup({ title: "", desc: "", open: false });
+        router.push("/");
+      })
+      .catch((err: ApolloError) => {
+        setConfirmDelete(false);
+        setErrorPopup({ title: err.name, desc: err.message, open: true });
+      });
+  };
+
   const handleSetRegular = () => {
     try {
-      const favorites = favIds.filter(
-        (item) => item !== parseInt(params.contactId)
-      );
+      const favorites = favIds.filter((item) => item !== contact?.id);
       setLocalStorage("FAVORITE", favorites);
       setRegPopup(false);
     } catch (error) {}
@@ -63,7 +80,7 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
 
   return (
     <React.Fragment>
-      <Loading loading={loading} />
+      <Loading loading={loading || loadingDelete} />
       <Navbar
         steps={["1", "2"]}
         rightIcon="ellipse-vertical"
@@ -86,7 +103,7 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
             icon: "trash",
             iconColor: Colors.ERROR,
             onClick: () => {
-              console.log("delete");
+              setConfirmDelete(true);
               setShowmenu(false);
             },
           },
@@ -205,6 +222,14 @@ const DetailContact = ({ params }: { params: { contactId: string } }) => {
         type="action"
         handleCloseBtn={() => setRegPopup(false)}
         handleYesBtn={handleSetRegular}
+      />
+      <Popup
+        title={`Delete ${contact?.first_name} from contact ?`}
+        desc="Contact will be remove from database."
+        open={confirmDelete}
+        type="action"
+        handleCloseBtn={() => setConfirmDelete(false)}
+        handleYesBtn={handleDelete}
       />
     </React.Fragment>
   );
