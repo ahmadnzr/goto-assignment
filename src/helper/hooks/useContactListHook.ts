@@ -1,6 +1,8 @@
 import { ApolloError, useQuery } from "@apollo/client";
 import { CONTACT_LIST } from "../queries/list";
 import { getLocalStorage } from "../utils";
+import { useContext, useEffect } from "react";
+import { AppContext } from "@/container/AppContainer";
 
 export interface ContactApiResponse {
   created_at: Date;
@@ -19,6 +21,7 @@ interface ContactListResponse {
 }
 
 const useContactListHook = (): ContactListResponse => {
+  const { setGlobalError, globalError } = useContext(AppContext);
   const { data, error, loading } = useQuery<{ contact: ContactApiResponse[] }>(
     CONTACT_LIST
   );
@@ -31,6 +34,21 @@ const useContactListHook = (): ContactListResponse => {
   const regulars = data
     ? data?.contact?.filter((item) => !favIds?.includes(item.id))
     : [];
+
+  useEffect(() => {
+    // setGlobar error when error from query
+    if (error && !loading && !globalError?.isError) {
+      setGlobalError({ title: error.name, desc: error.message, isError: true });
+      return;
+    }
+  }, [error, globalError?.isError, setGlobalError, loading]);
+
+  useEffect(() => {
+    // setGlobal error to false when success request is success
+    if (!error && !loading && globalError?.isError) {
+      setGlobalError({ title: "", desc: "", isError: false });
+    }
+  }, [error, globalError?.isError, loading, setGlobalError]);
 
   return {
     error,

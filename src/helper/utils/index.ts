@@ -1,3 +1,5 @@
+"use client"
+
 type LocalStorageKey = "FAVORITE";
 
 export const getLocalStorage = <T>(key: LocalStorageKey): T | null => {

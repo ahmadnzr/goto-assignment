@@ -43,8 +43,10 @@ const Home = () => {
     } catch (error) {}
   };
 
+  // console.log(loading, error);
+
   return (
-    <div>
+    <React.Fragment>
       <Loading loading={loading} />
       <TopContent filter={filter} setFilter={setFilter} />
       <ListContainer>
@@ -119,7 +121,7 @@ const Home = () => {
         handleCloseBtn={() => setFavPopup(false)}
         handleYesBtn={handleSetFav}
       />
-    </div>
+    </React.Fragment>
   );
 };
 
@@ -128,6 +130,12 @@ export default Home;
 const ListContainer = styled.div`
   margin-top: var(--floating-top-home);
   padding: 5px 0;
+`;
+
+const EmptyContact = styled.div`
+  margin-top: var(--floating-top-home);
+  background-color: red;
+  height: 100%;
 `;
 
 const ContactList = styled.div`
