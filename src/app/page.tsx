@@ -22,8 +22,8 @@ const Home = () => {
   const [selectedContact, setSelectedContact] =
     useState<ContactApiResponse | null>(null);
 
-  const handleClickCard = () => {
-    router.push("/contact/2");
+  const handleClickCard = (contactId: number) => {
+    router.push("/contact/" + contactId);
   };
 
   const handleSetFav = () => {
@@ -42,8 +42,6 @@ const Home = () => {
       setFavPopup(false);
     } catch (error) {}
   };
-
-  // console.log(loading, error);
 
   return (
     <React.Fragment>
@@ -65,11 +63,8 @@ const Home = () => {
                 <CardList
                   key={i}
                   isFavorite
-                  item={{
-                    label: item.first_name,
-                    subLabel: item?.phones[0]?.number,
-                  }}
-                  onClick={handleClickCard}
+                  item={item}
+                  onClick={() => handleClickCard(item.id)}
                   onClickFav={() => {
                     setFavPopup(true);
                     setSelectedContact(item);
@@ -92,11 +87,8 @@ const Home = () => {
               {regulars.map((item, i) => (
                 <CardList
                   key={i}
-                  item={{
-                    label: item.first_name,
-                    subLabel: item.phones[0]?.number,
-                  }}
-                  onClick={handleClickCard}
+                  item={item}
+                  onClick={() => handleClickCard(item.id)}
                   onClickFav={() => {
                     setRegPopup(true);
                     setSelectedContact(item);

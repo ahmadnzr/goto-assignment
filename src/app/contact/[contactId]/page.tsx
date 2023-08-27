@@ -1,15 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import styled from "@emotion/styled";
 
-import { Button, Colors, TextStyle } from "@/components/atoms";
+import { Button, Colors, Loading, TextStyle } from "@/components/atoms";
 import Navbar from "@/components/template/Navbar";
+import useContactDetailHook from "@/helper/hooks/useContactDetailHook";
 
 type tabValue = 0 | 1;
 
-const DetailContact = () => {
+const DetailContact = ({ params }: { params: { contactId: string } }) => {
+  const { error, loading, contact } = useContactDetailHook({
+    contactId: parseInt(params.contactId),
+  });
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<tabValue>(0);
   const [showMenu, setShowmenu] = useState(false);
@@ -20,6 +24,7 @@ const DetailContact = () => {
 
   return (
     <div>
+      <Loading loading={loading} />
       <Navbar
         steps={["1", "2"]}
         rightIcon="ellipse-vertical"
@@ -34,7 +39,7 @@ const DetailContact = () => {
             iconColor: Colors.NEUTRAL_40,
             onClick: () => {
               setShowmenu(false);
-              router.push("/contact/2/edit")
+              router.push("/contact/2/edit");
             },
           },
           {
@@ -61,7 +66,7 @@ const DetailContact = () => {
       <TopDetailWrapper>
         <Image width="90" height="90" src="/avatar.jpg" alt="" />
         <TextStyle size="sm" weight="bold" className="name">
-          Johndev
+          {`${contact?.first_name || ""} ${contact?.last_name || "-"}`}
         </TextStyle>
         <TextStyle color={Colors.NEUTRAL_40} size="xs" className="location">
           Yogyakarta, Indonesia
@@ -91,14 +96,15 @@ const DetailContact = () => {
               <TextStyle size="xs" weight="semibold" color={Colors.NEUTRAL_40}>
                 Phone Number :
               </TextStyle>
-              <div>
-                <TextStyle size="sm" weight="bold">
-                  +62 987 9384 9923
-                </TextStyle>
-                <TextStyle size="sm" weight="bold">
-                  +62 987 9384 9923
-                </TextStyle>
-              </div>
+              <NumberList>
+                {contact?.phones.map((item, i) => (
+                  <li key={i}>
+                    <TextStyle size="sm" weight="bold">
+                      {item.number}
+                    </TextStyle>
+                  </li>
+                ))}
+              </NumberList>
             </DetailContent>
             <DetailContent>
               <TextStyle size="xs" weight="semibold" color={Colors.NEUTRAL_40}>
@@ -185,6 +191,15 @@ const DetailContainer = styled.div`
 `;
 
 const DetailContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+const NumberList = styled.ul`
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 2px;

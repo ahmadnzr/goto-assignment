@@ -44,6 +44,11 @@ const AppContainer = ({ children, padding = "0px" }: Props) => {
   };
 
   useEffect(() => {
+    if (!error.isError) {
+      setErrPopup(false);
+    }
+  }, [error]);
+  useEffect(() => {
     console.log(error);
   }, [error]);
 
