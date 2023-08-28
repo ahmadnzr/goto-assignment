@@ -1,29 +1,57 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import styled from "@emotion/styled";
-
-import { Colors, Loading, TextStyle } from "@/components/atoms";
-import { CardList } from "@/components/molecules";
 import { useRouter } from "next/navigation";
-import TopContent, { Filter } from "@/components/template/Home/TopContent";
+
 import useContactListHook, {
   ContactApiResponse,
 } from "@/helper/hooks/useContactListHook";
-import Popup from "@/components/molecules/Popup";
+
+import { Colors, Loading, TextStyle, CardList, Popup } from "@/components/";
+import TopContent, { Filter } from "@/components/template/Home/TopContent";
+
 import { getLocalStorage, setLocalStorage } from "@/helper/utils";
+import { PopupProps } from "@/helper/types";
+import Pagination from "@/components/molecules/Pagination";
+import { useLazyQuery } from "@apollo/client";
+import { CONTACT_LIST } from "@/helper/queries/list";
+import useDebounce from "@/helper/hooks/useDebounce";
 
 const Home = () => {
   const router = useRouter();
-  const { error, loading, favorites, regulars, favIds } = useContactListHook();
+
+  const { error, loading, data, favIds } = useContactListHook();
+  const [
+    searchContact,
+    { data: dataSearch, loading: loadingSearch, error: errSearch },
+  ] = useLazyQuery<{ contact: ContactApiResponse[] }>(CONTACT_LIST, {
+    fetchPolicy: "no-cache",
+  });
 
   const [favPopup, setFavPopup] = useState(false);
   const [regPopup, setRegPopup] = useState(false);
   const [filter, setFilter] = useState<Filter>("all");
+  const [search, setSearch] = useState("");
   const [selectedContact, setSelectedContact] =
     useState<ContactApiResponse | null>(null);
+  const [errorPopup, setErrorPopup] = useState<PopupProps>({
+    title: "",
+    desc: "",
+    open: false,
+  });
+  const [contactListData, setContactListData] = useState<ContactApiResponse[]>(
+    []
+  );
 
-  const handleClickCard = () => {
-    router.push("/contact/2");
+  const [page, setPage] = useState(0);
+  const rowsPerPage = 10;
+  const contactList =
+    search !== ""
+      ? contactListData
+      : data.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
+
+  const handleClickCard = (contactId: number) => {
+    router.push("/contact/" + contactId);
   };
 
   const handleSetFav = () => {
@@ -43,12 +71,59 @@ const Home = () => {
     } catch (error) {}
   };
 
+  const handleSetFilter = (filter: Filter) => {
+    setFilter(filter);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const search = e.target.value;
+    setSearch(search);
+  };
+
+  useEffect(() => {
+    if (error && !loading) {
+      setErrorPopup({ title: error.name, desc: error.message, open: true });
+      return;
+    }
+  }, [error, loading]);
+
+  useDebounce(
+    () => {
+      searchContact({
+        variables: {
+          where: {
+            first_name: {
+              _like: `%${search}%`,
+            },
+          },
+        },
+      });
+    },
+    [search],
+    300
+  );
+
+  useEffect(() => {
+    if (search !== "") {
+      setContactListData(dataSearch?.contact || []);
+    }
+  }, [dataSearch, search]);
+
   return (
-    <div>
-      <Loading loading={loading} />
-      <TopContent filter={filter} setFilter={setFilter} />
+    <React.Fragment>
+      <Loading loading={loading || loadingSearch} />
+      <TopContent
+        filter={filter}
+        setFilter={handleSetFilter}
+        onChange={handleSearch}
+        search={search}
+        onReset={() => {
+          setSearch("");
+        }}
+      />
       <ListContainer>
-        {favorites.length && ["all", "fav"].includes(filter) ? (
+        {contactList?.filter((item) => item.isFav).length &&
+        ["all", "fav"].includes(filter) ? (
           <GroupContact>
             <TextStyle
               className="group-title"
@@ -59,25 +134,25 @@ const Home = () => {
             </TextStyle>
 
             <ContactList>
-              {favorites.map((item, i) => (
-                <CardList
-                  key={i}
-                  isFavorite
-                  item={{
-                    label: item.first_name,
-                    subLabel: item?.phones[0]?.number,
-                  }}
-                  onClick={handleClickCard}
-                  onClickFav={() => {
-                    setFavPopup(true);
-                    setSelectedContact(item);
-                  }}
-                />
-              ))}
+              {contactList
+                ?.filter((item) => item.isFav)
+                ?.map((item, i) => (
+                  <CardList
+                    key={i}
+                    isFavorite={item.isFav}
+                    item={item}
+                    onClick={() => handleClickCard(item.id)}
+                    onClickFav={() => {
+                      setFavPopup(true);
+                      setSelectedContact(item);
+                    }}
+                  />
+                ))}
             </ContactList>
           </GroupContact>
         ) : null}
-        {regulars.length && ["all", "reg"].includes(filter) ? (
+        {contactList?.filter((item) => !item.isFav).length &&
+        ["all", "reg"].includes(filter) ? (
           <GroupContact>
             <TextStyle
               className="group-title"
@@ -87,22 +162,43 @@ const Home = () => {
               Regular Contacts
             </TextStyle>
             <ContactList>
-              {regulars.map((item, i) => (
-                <CardList
-                  key={i}
-                  item={{
-                    label: item.first_name,
-                    subLabel: item.phones[0]?.number,
-                  }}
-                  onClick={handleClickCard}
-                  onClickFav={() => {
-                    setRegPopup(true);
-                    setSelectedContact(item);
-                  }}
-                />
-              ))}
+              {contactList
+                ?.filter((item) => !item.isFav)
+                ?.map((item, i) => (
+                  <CardList
+                    key={i}
+                    item={item}
+                    isFavorite={item.isFav}
+                    onClick={() => handleClickCard(item.id)}
+                    onClickFav={() => {
+                      setRegPopup(true);
+                      setSelectedContact(item);
+                    }}
+                  />
+                ))}
             </ContactList>
           </GroupContact>
+        ) : null}
+
+        {contactList.length ? (
+          <PaginationContainer>
+            <Pagination
+              totalData={data?.length || 0}
+              currentPage={page}
+              rowPerPage={rowsPerPage}
+              onClickPage={(id) => {
+                setPage(id);
+              }}
+            />
+          </PaginationContainer>
+        ) : null}
+
+        {contactList.length === 0 ? (
+          <EmptyContact>
+            <TextStyle size="md" weight="semibold" color={Colors.NEUTRAL_40}>
+              Contact Empty
+            </TextStyle>
+          </EmptyContact>
         ) : null}
       </ListContainer>
       <Popup
@@ -119,15 +215,25 @@ const Home = () => {
         handleCloseBtn={() => setFavPopup(false)}
         handleYesBtn={handleSetFav}
       />
-    </div>
+      <Popup
+        title={errorPopup.title}
+        desc={errorPopup.desc}
+        open={errorPopup.open}
+        handleYesBtn={() => setErrorPopup({ title: "", desc: "", open: false })}
+      />
+    </React.Fragment>
   );
 };
 
 export default Home;
 
 const ListContainer = styled.div`
-  margin-top: var(--floating-top-home);
   padding: 5px 0;
+`;
+
+const EmptyContact = styled.div`
+  height: 100%;
+  text-align: center;
 `;
 
 const ContactList = styled.div`
@@ -143,3 +249,12 @@ const GroupContact = styled.div({
     marginBottom: "10px",
   },
 });
+
+const PaginationContainer = styled.div`
+  width: 100%;
+  display: flex;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  padding: 10px 12px;
+`;

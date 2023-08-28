@@ -1,25 +1,86 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import styled from "@emotion/styled";
 
-import { Button, Colors, TextStyle } from "@/components/atoms";
+import useContactDetailHook from "@/helper/hooks/useContactDetailHook";
+
+import { Button, Colors, Icon, Loading, Popup, TextStyle } from "@/components";
 import Navbar from "@/components/template/Navbar";
+import { PopupProps } from "@/helper/types";
+import { getLocalStorage, setLocalStorage } from "@/helper/utils";
+import { ListMenu } from "@/components/atoms/CircleButton";
+import { ApolloError, useMutation } from "@apollo/client";
+import { DELETE_CONTACT } from "@/helper/queries/delete-contact";
 
 type tabValue = 0 | 1;
 
-const DetailContact = () => {
+const DetailContact = ({ params }: { params: { contactId: string } }) => {
+  const { error, loading, contact, isFavorite } = useContactDetailHook({
+    contactId: parseInt(params.contactId),
+  });
+  const [deleteContact, { loading: loadingDelete }] =
+    useMutation(DELETE_CONTACT);
+
   const router = useRouter();
+
   const [activeTab, setActiveTab] = useState<tabValue>(0);
   const [showMenu, setShowmenu] = useState(false);
+  const [errorPopup, setErrorPopup] = useState<PopupProps>({
+    title: "",
+    desc: "",
+    open: false,
+  });
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const favIds = getLocalStorage<number[] | null>("FAVORITE") || [];
+  const [favPopup, setFavPopup] = useState(false);
+  const [regPopup, setRegPopup] = useState(false);
 
   const handleSetActiveTab = (tab: tabValue) => {
     setActiveTab(tab);
   };
 
+  const handleSetFav = () => {
+    try {
+      setLocalStorage("FAVORITE", [...favIds, contact?.id]);
+
+      router.refresh();
+      setFavPopup(false);
+    } catch (error) {}
+  };
+
+  const handleDelete = () => {
+    deleteContact({ variables: { id: contact?.id } })
+      .then(() => {
+        setErrorPopup({ title: "", desc: "", open: false });
+        router.push("/");
+      })
+      .catch((err: ApolloError) => {
+        setConfirmDelete(false);
+        setErrorPopup({ title: err.name, desc: err.message, open: true });
+      });
+  };
+
+  const handleSetRegular = () => {
+    try {
+      const favorites = favIds.filter((item) => item !== contact?.id);
+      setLocalStorage("FAVORITE", favorites);
+      setRegPopup(false);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (error && !loading) {
+      setErrorPopup({ title: error.name, desc: error.message, open: true });
+      return;
+    }
+  }, [error, loading]);
+
   return (
-    <div>
+    <React.Fragment>
+      <Loading loading={loading || loadingDelete} />
       <Navbar
         steps={["1", "2"]}
         rightIcon="ellipse-vertical"
@@ -34,7 +95,7 @@ const DetailContact = () => {
             iconColor: Colors.NEUTRAL_40,
             onClick: () => {
               setShowmenu(false);
-              router.push("/contact/2/edit")
+              router.push(`/contact/${contact?.id}/edit`);
             },
           },
           {
@@ -42,26 +103,43 @@ const DetailContact = () => {
             icon: "trash",
             iconColor: Colors.ERROR,
             onClick: () => {
-              console.log("delete");
+              setConfirmDelete(true);
               setShowmenu(false);
             },
           },
-          {
-            label: "Favorite",
-            icon: "star-solid",
-            iconColor: Colors.SECONDARY_10,
-            onClick: () => {
-              console.log("favorite");
-              setShowmenu(false);
-            },
-          },
+          ...(isFavorite
+            ? ([
+                {
+                  label: "Set Regular",
+                  icon: "star-solid",
+                  iconColor: Colors.NEUTRAL_30,
+                  onClick: () => {
+                    setRegPopup(true);
+                    setShowmenu(false);
+                  },
+                },
+              ] as ListMenu[])
+            : ([
+                {
+                  label: "Set Favorite",
+                  icon: "star-solid",
+                  iconColor: Colors.SECONDARY_10,
+                  onClick: () => {
+                    setFavPopup(true);
+                    setShowmenu(false);
+                  },
+                },
+              ] as ListMenu[])),
         ]}
         showMenu2={showMenu}
       />
       <TopDetailWrapper>
         <Image width="90" height="90" src="/avatar.jpg" alt="" />
+        {isFavorite && (
+          <Icon name="star-solid" color={Colors.SECONDARY_10} className="fav" />
+        )}
         <TextStyle size="sm" weight="bold" className="name">
-          Johndev
+          {`${contact?.first_name || ""} ${contact?.last_name || "-"}`}
         </TextStyle>
         <TextStyle color={Colors.NEUTRAL_40} size="xs" className="location">
           Yogyakarta, Indonesia
@@ -91,14 +169,15 @@ const DetailContact = () => {
               <TextStyle size="xs" weight="semibold" color={Colors.NEUTRAL_40}>
                 Phone Number :
               </TextStyle>
-              <div>
-                <TextStyle size="sm" weight="bold">
-                  +62 987 9384 9923
-                </TextStyle>
-                <TextStyle size="sm" weight="bold">
-                  +62 987 9384 9923
-                </TextStyle>
-              </div>
+              <NumberList>
+                {contact?.phones.map((item, i) => (
+                  <li key={i}>
+                    <TextStyle size="sm" weight="bold">
+                      {item.number}
+                    </TextStyle>
+                  </li>
+                ))}
+              </NumberList>
             </DetailContent>
             <DetailContent>
               <TextStyle size="xs" weight="semibold" color={Colors.NEUTRAL_40}>
@@ -123,7 +202,36 @@ const DetailContact = () => {
           </TextStyle>
         )}
       </TabContent>
-    </div>
+      <Popup
+        title={errorPopup.title}
+        desc={errorPopup.desc}
+        open={errorPopup.open}
+        handleYesBtn={() => setErrorPopup({ title: "", desc: "", open: false })}
+      />
+      <Popup
+        title="Contact added successfully"
+        desc={`${contact?.first_name} successfully added to list favorites.`}
+        open={favPopup}
+        handleCloseBtn={() => setFavPopup(false)}
+        handleYesBtn={handleSetFav}
+      />
+      <Popup
+        title="Remove this contact from favorites ?"
+        desc={`${contact?.first_name} will be marked as a regular contact.`}
+        open={regPopup}
+        type="action"
+        handleCloseBtn={() => setRegPopup(false)}
+        handleYesBtn={handleSetRegular}
+      />
+      <Popup
+        title={`Delete ${contact?.first_name} from contact ?`}
+        desc="Contact will be remove from database."
+        open={confirmDelete}
+        type="action"
+        handleCloseBtn={() => setConfirmDelete(false)}
+        handleYesBtn={handleDelete}
+      />
+    </React.Fragment>
   );
 };
 
@@ -139,6 +247,9 @@ const TopDetailWrapper = styled.div({
   },
   "& .location": {
     marginTop: "5px",
+  },
+  "& .fav": {
+    margin: "0 auto",
   },
 });
 
@@ -185,6 +296,15 @@ const DetailContainer = styled.div`
 `;
 
 const DetailContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+const NumberList = styled.ul`
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 2px;

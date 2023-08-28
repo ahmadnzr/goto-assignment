@@ -51,7 +51,11 @@ const CButton = styled.button(
   ({ variant }: ButtonType) => ({
     padding: variant === "text" ? "0" : "10px 20px",
     backgroundColor:
-      variant === "contained" ? "var(--primary-10)" : "var(--neutral-10)",
+      variant === "contained"
+        ? "var(--primary-10)"
+        : variant === "ghost"
+        ? "var(--neutral-20)"
+        : "var(--neutral-10)",
     color: variant === "contained" ? "var(--neutral-10)" : "var(--primary-10)",
   })
 );

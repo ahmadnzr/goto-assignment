@@ -7,7 +7,7 @@ import { ColorValues, Colors, TextStyle } from "..";
 
 interface CButtonProps {
   type: "primary" | "base";
-  size: "sm" | "md" | "xs";
+  size: "sm" | "md" | "lg";
   shadow: boolean;
   bgColor: ColorValues;
 }
@@ -34,7 +34,7 @@ const CircleButton = ({
   icon = "plus",
   type = "base",
   onClick,
-  size = "md",
+  size = "lg",
   shadow = true,
   color = Colors.PRIMARY_10,
   bgColor = Colors.NEUTRAL_10,
@@ -58,6 +58,7 @@ const CircleButton = ({
         <Icon
           name={icon}
           className="icon-btn"
+          size={size}
           color={type === "primary" ? Colors.NEUTRAL_10 : color}
         />
       </CButton>
@@ -70,12 +71,11 @@ const CircleButton = ({
             >
               {listMenu.map((item, i) => (
                 <Menu key={i} onClick={item.onClick}>
-                  <Icon name={item.icon} size="lg" color={item.iconColor} />
+                  <Icon name={item.icon} size="md" color={item.iconColor} />
                   <TextStyle size="xs">{item.label}</TextStyle>
                   {item.selected && (
                     <Icon
                       name="check"
-                      size="sm"
                       color={Colors.PRIMARY_10}
                       className="check"
                     />
@@ -115,8 +115,8 @@ const CButton = styled.div(
     },
   },
   ({ type, size, shadow, bgColor }: CButtonProps) => ({
-    height: size === "sm" ? "30px" : size === "xs" ? "14px" : "40px",
-    width: size === "sm" ? "30px" : size == "xs" ? "14px" : "40px",
+    height: size === "md" ? "30px" : size === "sm" ? "14px" : "40px",
+    width: size === "md" ? "30px" : size == "sm" ? "14px" : "40px",
     backgroundColor:
       type === "primary" ? `var(--primary-10)` : `var(--${bgColor})`,
     boxShadow: shadow ? `var(--shadow-sm)` : "none",

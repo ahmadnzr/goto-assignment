@@ -1,5 +1,5 @@
 :root {
-  --max-width: 90%;
+  --max-width: 100%;
   --radius-full: 100%;
   --radius-sm: 10px;
   --radius-md: 20px;
@@ -19,7 +19,7 @@
   --text-xs: 12px;
   --text-sm: 16px;
   --text-md: 20px;
-  --text-lg: 25px;
+  --text-lg: 24px;
   --text-xl: 39px;
   --text-xxl: 48px;
 
@@ -37,6 +37,29 @@
   --transition: 0.2s ease-in;
 
   --floating-top-home: 120px;
+
+  --spacing-2: 2px;
+  --spacing-4: 4px;
+  --spacing-6: 6px;
+}
+
+@media screen and (min-width: 800px) {
+  :root {
+    --max-width: 900px;
+    --radius-full: 100%;
+
+    --text-xxs: 12px;
+    --text-xs: 14px;
+    --text-sm: 18px;
+    --text-md: 22px;
+    --text-lg: 28px;
+
+    --floating-top-home: 120px;
+
+    --spacing-2: 4px;
+    --spacing-4: 8px;
+    --spacing-6: 12px;
+  }
 }
 
 * {
