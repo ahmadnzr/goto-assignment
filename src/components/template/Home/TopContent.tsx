@@ -10,12 +10,20 @@ export type Filter = "all" | "fav" | "reg";
 interface Props {
   filter: Filter;
   setFilter: (filter: Filter) => void;
+  onReset: () => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  search: string;
 }
 
-const TopContent = ({ filter, setFilter }: Props) => {
+const TopContent = ({
+  filter,
+  setFilter,
+  onChange,
+  onReset,
+  search,
+}: Props) => {
   const router = useRouter();
   const [showMenu, setShowmenu] = useState(false);
-  const [search, setSearch] = useState("");
 
   return (
     <Wrapper>
@@ -67,11 +75,7 @@ const TopContent = ({ filter, setFilter }: Props) => {
               Contact
             </TextStyle>
           </Navbar>
-          <InputSearch
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onReset={() => setSearch("")}
-          />
+          <InputSearch value={search} onChange={onChange} onReset={onReset} />
         </Content>
       </ContentWrapper>
     </Wrapper>

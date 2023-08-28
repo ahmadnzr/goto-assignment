@@ -13,15 +13,25 @@ import TopContent, { Filter } from "@/components/template/Home/TopContent";
 import { getLocalStorage, setLocalStorage } from "@/helper/utils";
 import { PopupProps } from "@/helper/types";
 import Pagination from "@/components/molecules/Pagination";
+import { useLazyQuery } from "@apollo/client";
+import { CONTACT_LIST } from "@/helper/queries/list";
+import useDebounce from "@/helper/hooks/useDebounce";
 
 const Home = () => {
   const router = useRouter();
 
   const { error, loading, data, favIds } = useContactListHook();
+  const [
+    searchContact,
+    { data: dataSearch, loading: loadingSearch, error: errSearch },
+  ] = useLazyQuery<{ contact: ContactApiResponse[] }>(CONTACT_LIST, {
+    fetchPolicy: "no-cache",
+  });
 
   const [favPopup, setFavPopup] = useState(false);
   const [regPopup, setRegPopup] = useState(false);
   const [filter, setFilter] = useState<Filter>("all");
+  const [search, setSearch] = useState("");
   const [selectedContact, setSelectedContact] =
     useState<ContactApiResponse | null>(null);
   const [errorPopup, setErrorPopup] = useState<PopupProps>({
@@ -29,10 +39,16 @@ const Home = () => {
     desc: "",
     open: false,
   });
+  const [contactListData, setContactListData] = useState<ContactApiResponse[]>(
+    []
+  );
 
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
-  const contactList = data.slice(page * 10, (page + 1) * 10);
+  const contactList =
+    search !== ""
+      ? contactListData
+      : data.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
   const handleClickCard = (contactId: number) => {
     router.push("/contact/" + contactId);
@@ -59,6 +75,11 @@ const Home = () => {
     setFilter(filter);
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const search = e.target.value;
+    setSearch(search);
+  };
+
   useEffect(() => {
     if (error && !loading) {
       setErrorPopup({ title: error.name, desc: error.message, open: true });
@@ -66,12 +87,42 @@ const Home = () => {
     }
   }, [error, loading]);
 
+  useDebounce(
+    () => {
+      searchContact({
+        variables: {
+          where: {
+            first_name: {
+              _like: `%${search}%`,
+            },
+          },
+        },
+      });
+    },
+    [search],
+    300
+  );
+
+  useEffect(() => {
+    if (search !== "") {
+      setContactListData(dataSearch?.contact || []);
+    }
+  }, [dataSearch, search]);
+
   return (
     <React.Fragment>
-      <Loading loading={loading} />
-      <TopContent filter={filter} setFilter={handleSetFilter} />
+      <Loading loading={loading || loadingSearch} />
+      <TopContent
+        filter={filter}
+        setFilter={handleSetFilter}
+        onChange={handleSearch}
+        search={search}
+        onReset={() => {
+          setSearch("");
+        }}
+      />
       <ListContainer>
-        {contactList.filter((item) => item.isFav).length &&
+        {contactList?.filter((item) => item.isFav).length &&
         ["all", "fav"].includes(filter) ? (
           <GroupContact>
             <TextStyle
@@ -84,8 +135,8 @@ const Home = () => {
 
             <ContactList>
               {contactList
-                .filter((item) => item.isFav)
-                .map((item, i) => (
+                ?.filter((item) => item.isFav)
+                ?.map((item, i) => (
                   <CardList
                     key={i}
                     isFavorite={item.isFav}
@@ -100,7 +151,7 @@ const Home = () => {
             </ContactList>
           </GroupContact>
         ) : null}
-        {contactList.filter((item) => !item.isFav).length &&
+        {contactList?.filter((item) => !item.isFav).length &&
         ["all", "reg"].includes(filter) ? (
           <GroupContact>
             <TextStyle
@@ -112,8 +163,8 @@ const Home = () => {
             </TextStyle>
             <ContactList>
               {contactList
-                .filter((item) => !item.isFav)
-                .map((item, i) => (
+                ?.filter((item) => !item.isFav)
+                ?.map((item, i) => (
                   <CardList
                     key={i}
                     item={item}
@@ -133,7 +184,6 @@ const Home = () => {
           <PaginationContainer>
             <Pagination
               totalData={data?.length || 0}
-              // totalData={2000}
               currentPage={page}
               rowPerPage={rowsPerPage}
               onClickPage={(id) => {
@@ -141,6 +191,14 @@ const Home = () => {
               }}
             />
           </PaginationContainer>
+        ) : null}
+
+        {contactList.length === 0 ? (
+          <EmptyContact>
+            <TextStyle size="md" weight="semibold" color={Colors.NEUTRAL_40}>
+              Contact Empty
+            </TextStyle>
+          </EmptyContact>
         ) : null}
       </ListContainer>
       <Popup
@@ -175,9 +233,8 @@ const ListContainer = styled.div`
 `;
 
 const EmptyContact = styled.div`
-  margin-top: var(--floating-top-home);
-  background-color: red;
   height: 100%;
+  text-align: center;
 `;
 
 const ContactList = styled.div`

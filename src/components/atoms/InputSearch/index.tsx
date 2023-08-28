@@ -7,12 +7,11 @@ import CircleButton from "../CircleButton";
 
 interface Props {
   value: string;
-  onChange: () => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onReset: () => void;
 }
 
 const InputSearch = ({ value, onChange, onReset }: Props) => {
-  const inputRef = useRef<HTMLInputElement>(null);
   const [searchFocus, setSearchFocus] = useState(false);
 
   return (
@@ -21,7 +20,6 @@ const InputSearch = ({ value, onChange, onReset }: Props) => {
         type="text"
         placeholder="Search..."
         value={value}
-        ref={inputRef}
         onFocus={() => setSearchFocus(true)}
         onBlur={() => setSearchFocus(false)}
         onChange={onChange}
