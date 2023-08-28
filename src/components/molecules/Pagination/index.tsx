@@ -45,7 +45,7 @@ const Pagination = ({
 export default Pagination;
 
 const Container = styled.div`
-  width: 100%;
+  width: fit-content;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -60,6 +60,6 @@ const PaginationButton = styled.button(
     cursor: "pointer",
   },
   ({ selected }: { selected: boolean }) => ({
-    backgroundColor: selected ? "var(--primary-10)" : "var(--neutral-20)",
+    backgroundColor: selected ? "var(--primary-10)" : "var(--neutral-10)",
   })
 );

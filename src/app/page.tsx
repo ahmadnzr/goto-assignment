@@ -71,14 +71,6 @@ const Home = () => {
       <Loading loading={loading} />
       <TopContent filter={filter} setFilter={handleSetFilter} />
       <ListContainer>
-        <Pagination
-          totalData={data?.length || 0}
-          currentPage={page}
-          rowPerPage={rowsPerPage}
-          onClickPage={(id) => {
-            setPage(id);
-          }}
-        />
         {contactList.filter((item) => item.isFav).length &&
         ["all", "fav"].includes(filter) ? (
           <GroupContact>
@@ -136,6 +128,20 @@ const Home = () => {
             </ContactList>
           </GroupContact>
         ) : null}
+
+        {contactList.length ? (
+          <PaginationContainer>
+            <Pagination
+              totalData={data?.length || 0}
+              // totalData={2000}
+              currentPage={page}
+              rowPerPage={rowsPerPage}
+              onClickPage={(id) => {
+                setPage(id);
+              }}
+            />
+          </PaginationContainer>
+        ) : null}
       </ListContainer>
       <Popup
         title="Remove this contact from favorites ?"
@@ -187,3 +193,11 @@ const GroupContact = styled.div({
     marginBottom: "10px",
   },
 });
+
+const PaginationContainer = styled.div`
+  width: 100%;
+  display: flex;
+  background-color: var(--neutral-20);
+  overflow-x: scroll;
+  padding: 10px 12px;
+`;
