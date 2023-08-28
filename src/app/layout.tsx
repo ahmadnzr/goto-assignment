@@ -21,7 +21,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={nunito.className}>
+      <body className={nunito.className} style={{backgroundColor: "var(--neutral-20)"}}>
         <AppWrapper>
           <ContentWrapper>{children}</ContentWrapper>
         </AppWrapper>

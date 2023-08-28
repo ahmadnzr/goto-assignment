@@ -228,7 +228,6 @@ const Home = () => {
 export default Home;
 
 const ListContainer = styled.div`
-  margin-top: var(--floating-top-home);
   padding: 5px 0;
 `;
 
@@ -254,7 +253,8 @@ const GroupContact = styled.div({
 const PaginationContainer = styled.div`
   width: 100%;
   display: flex;
-  background-color: var(--neutral-20);
-  overflow-x: scroll;
+  display: flex;
+  justify-content: right;
+  align-items: center;
   padding: 10px 12px;
 `;

@@ -27,57 +27,55 @@ const TopContent = ({
 
   return (
     <Wrapper>
-      <ContentWrapper>
-        <Content>
-          <Navbar
-            steps={[]}
-            leftIcon="adjust"
-            rightIcon="plus"
-            onClickNavLeft={() => {
-              setShowmenu((prev) => !prev);
-            }}
-            onClickNavRight={() => router.push("/contact/add")}
-            listMenu1={[
-              {
-                label: "All Contact",
-                icon: "list",
-                iconColor: Colors.NEUTRAL_40,
-                selected: filter === "all",
-                onClick: () => {
-                  setShowmenu(false);
-                  setFilter("all");
-                },
+      <Content>
+        <Navbar
+          steps={[]}
+          leftIcon="adjust"
+          rightIcon="plus"
+          onClickNavLeft={() => {
+            setShowmenu((prev) => !prev);
+          }}
+          onClickNavRight={() => router.push("/contact/add")}
+          listMenu1={[
+            {
+              label: "All Contact",
+              icon: "list",
+              iconColor: Colors.NEUTRAL_40,
+              selected: filter === "all",
+              onClick: () => {
+                setShowmenu(false);
+                setFilter("all");
               },
-              {
-                label: "Favorite",
-                icon: "star-solid",
-                iconColor: Colors.SECONDARY_10,
-                selected: filter === "fav",
-                onClick: () => {
-                  setShowmenu(false);
-                  setFilter("fav");
-                },
+            },
+            {
+              label: "Favorite",
+              icon: "star-solid",
+              iconColor: Colors.SECONDARY_10,
+              selected: filter === "fav",
+              onClick: () => {
+                setShowmenu(false);
+                setFilter("fav");
               },
-              {
-                label: "Regular",
-                icon: "star-solid",
-                selected: filter === "reg",
-                iconColor: Colors.NEUTRAL_30,
-                onClick: () => {
-                  setShowmenu(false);
-                  setFilter("reg");
-                },
+            },
+            {
+              label: "Regular",
+              icon: "star-solid",
+              selected: filter === "reg",
+              iconColor: Colors.NEUTRAL_30,
+              onClick: () => {
+                setShowmenu(false);
+                setFilter("reg");
               },
-            ]}
-            showMenu1={showMenu}
-          >
-            <TextStyle size="lg" weight="bold" color={Colors.PRIMARY_10}>
-              Contact
-            </TextStyle>
-          </Navbar>
-          <InputSearch value={search} onChange={onChange} onReset={onReset} />
-        </Content>
-      </ContentWrapper>
+            },
+          ]}
+          showMenu1={showMenu}
+        >
+          <TextStyle size="lg" weight="bold" color={Colors.PRIMARY_10}>
+            Contact
+          </TextStyle>
+        </Navbar>
+        <InputSearch value={search} onChange={onChange} onReset={onReset} />
+      </Content>
     </Wrapper>
   );
 };
@@ -85,7 +83,7 @@ const TopContent = ({
 export default TopContent;
 
 const Wrapper = styled.div`
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;

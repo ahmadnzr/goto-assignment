@@ -19,9 +19,6 @@ const Pagination = ({
     onClickPage(id);
   };
 
-  useEffect(() => {
-    console.log("firsrent");
-  }, []);
   return (
     <Container>
       {Array.from(Array(totalPage).keys()).map((item, i) => (
@@ -49,13 +46,13 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 5px;
+  gap: var(--spacing-4);
 `;
 
 const PaginationButton = styled.button(
   {
     border: "none",
-    padding: "2px 4px",
+    padding: "var(--spacing-2) var(--spacing-4)",
     borderRadius: "var(--radius-sm)",
     cursor: "pointer",
   },
