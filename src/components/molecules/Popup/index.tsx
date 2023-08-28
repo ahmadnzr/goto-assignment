@@ -32,46 +32,35 @@ const Popup = ({
   }, [open]);
 
   if (!open) return <></>;
-  return (
-    <CustomContainer ref={container}>
-      {container.current &&
-        ReactDOM.createPortal(
-          <Container>
-            <Content>
-              <TextStyle
-                size={desc ? "md" : "sm"}
-                weight="bold"
-                className="title"
-              >
-                {title}
-              </TextStyle>
-              {desc && (
-                <TextStyle size="sm" className="desc">
-                  {desc}
-                </TextStyle>
-              )}
-
-              {type === "action" ? (
-                <ActionWrapper>
-                  <Button width="full" onClick={handleYesBtn}>
-                    Yes
-                  </Button>
-                  <Button variant="text" onClick={handleCloseBtn}>
-                    Cancel
-                  </Button>
-                </ActionWrapper>
-              ) : (
-                <Button width="full" onClick={handleYesBtn}>
-                  OK
-                </Button>
-              )}
-            </Content>
-          </Container>,
-          // document.body
-
-          typeof document !== "undefined" ? document?.body : container.current
+  return ReactDOM.createPortal(
+    <Container>
+      <Content>
+        <TextStyle size={desc ? "md" : "sm"} weight="bold" className="title">
+          {title}
+        </TextStyle>
+        {desc && (
+          <TextStyle size="sm" className="desc">
+            {desc}
+          </TextStyle>
         )}
-    </CustomContainer>
+
+        {type === "action" ? (
+          <ActionWrapper>
+            <Button width="full" onClick={handleYesBtn}>
+              Yes
+            </Button>
+            <Button variant="text" onClick={handleCloseBtn}>
+              Cancel
+            </Button>
+          </ActionWrapper>
+        ) : (
+          <Button width="full" onClick={handleYesBtn}>
+            OK
+          </Button>
+        )}
+      </Content>
+    </Container>,
+    document.body
   );
 };
 

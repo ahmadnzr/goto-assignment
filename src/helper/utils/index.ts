@@ -2,7 +2,7 @@ type LocalStorageKey = "FAVORITE";
 
 export const getLocalStorage = <T>(key: LocalStorageKey): T | null => {
   try {
-    // if (typeof window === "undefined") return null;
+    if (typeof window === "undefined") return null;
     const value = localStorage.getItem(key);
 
     if (value === null) {
