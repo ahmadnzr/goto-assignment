@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+"use client";
+import React, { useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import styled from "@emotion/styled";
 
@@ -21,6 +22,7 @@ const Popup = ({
   handleYesBtn,
   handleCloseBtn,
 }: Props) => {
+  const container = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -30,40 +32,52 @@ const Popup = ({
   }, [open]);
 
   if (!open) return <></>;
-  return ReactDOM.createPortal(
-    <Container>
-      <Content>
-        <TextStyle size={desc ? "md" : "sm"} weight="bold" className="title">
-          {title}
-        </TextStyle>
-        {desc && (
-          <TextStyle size="sm" className="desc">
-            {desc}
-          </TextStyle>
-        )}
+  return (
+    <CustomContainer ref={container}>
+      {container.current &&
+        ReactDOM.createPortal(
+          <Container>
+            <Content>
+              <TextStyle
+                size={desc ? "md" : "sm"}
+                weight="bold"
+                className="title"
+              >
+                {title}
+              </TextStyle>
+              {desc && (
+                <TextStyle size="sm" className="desc">
+                  {desc}
+                </TextStyle>
+              )}
 
-        {type === "action" ? (
-          <ActionWrapper>
-            <Button width="full" onClick={handleYesBtn}>
-              Yes
-            </Button>
-            <Button variant="text" onClick={handleCloseBtn}>
-              Cancel
-            </Button>
-          </ActionWrapper>
-        ) : (
-          <Button width="full" onClick={handleYesBtn}>
-            OK
-          </Button>
+              {type === "action" ? (
+                <ActionWrapper>
+                  <Button width="full" onClick={handleYesBtn}>
+                    Yes
+                  </Button>
+                  <Button variant="text" onClick={handleCloseBtn}>
+                    Cancel
+                  </Button>
+                </ActionWrapper>
+              ) : (
+                <Button width="full" onClick={handleYesBtn}>
+                  OK
+                </Button>
+              )}
+            </Content>
+          </Container>,
+          // document.body
+
+          typeof document !== "undefined" ? document?.body : container.current
         )}
-      </Content>
-    </Container>,
-    document.body
+    </CustomContainer>
   );
 };
 
 export default Popup;
 
+const CustomContainer = styled.div``;
 const Container = styled.div`
   position: fixed;
   top: 0;

@@ -1,15 +1,18 @@
-"use client"
-
 type LocalStorageKey = "FAVORITE";
 
 export const getLocalStorage = <T>(key: LocalStorageKey): T | null => {
-  const value = localStorage.getItem(key);
+  try {
+    // if (typeof window === "undefined") return null;
+    const value = localStorage.getItem(key);
 
-  if (value === null) {
+    if (value === null) {
+      return null;
+    }
+
+    return JSON.parse(value) as T;
+  } catch (error) {
     return null;
   }
-
-  return JSON.parse(value) as T;
 };
 
 export const setLocalStorage = <T>(key: LocalStorageKey, value: T) => {

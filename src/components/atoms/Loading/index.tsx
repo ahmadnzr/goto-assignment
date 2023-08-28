@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 import Image from "next/image";
 import styled from "@emotion/styled";
@@ -9,6 +9,7 @@ interface Props {
 }
 
 const Loading = ({ loading }: Props) => {
+  const container = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (loading) {
       document.body.style.overflow = "hidden";
@@ -17,25 +18,34 @@ const Loading = ({ loading }: Props) => {
     document.body.style.overflow = "auto";
   }, [loading]);
 
+  // if (typeof window === "undefined") return null;
+
   if (!loading) return;
 
-  return ReactDOM.createPortal(
-    <Container>
-      <Loader>
-        <Image
-          src="/loading.png"
-          width="20"
-          height="20"
-          alt="loading"
-          className="loading"
-        />
-      </Loader>
-    </Container>,
-    document.body
+  return (
+    <CustomContainer ref={container}>
+      {container.current &&
+        ReactDOM.createPortal(
+          <Container>
+            <Loader>
+              <Image
+                src="/loading.png"
+                width="20"
+                height="20"
+                alt="loading"
+                className="loading"
+              />
+            </Loader>
+          </Container>,
+          typeof document !== "undefined" ? document?.body : container.current
+        )}
+    </CustomContainer>
   );
 };
 
 export default Loading;
+
+const CustomContainer = styled.div``;
 
 const Container = styled.div`
   position: fixed;
