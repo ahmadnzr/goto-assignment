@@ -12,7 +12,7 @@ export default ContentWrapper;
 const Container = styled.div`
   width: var(--max-width);
   background-color: var(--neutral-10);
-  height: 100%;
+  min-height: 100vh;
   margin: 0 auto;
   padding: 10px;
 `;
