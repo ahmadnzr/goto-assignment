@@ -11,6 +11,7 @@ interface Props extends Partial<ButtonType> {
   onClick?: () => void;
   width?: "fit-content" | "full";
   className?: string;
+  disabled?: boolean;
 }
 
 const Button = ({
@@ -20,6 +21,7 @@ const Button = ({
   width,
   className = "",
   variant = "contained",
+  disabled,
 }: Props) => {
   return (
     <CButton
@@ -28,6 +30,7 @@ const Button = ({
       className={className}
       variant={variant}
       style={{ width: width === "full" ? "100%" : "fit-content" }}
+      disabled={disabled}
     >
       {children}
     </CButton>
@@ -46,6 +49,11 @@ const CButton = styled.button(
 
     "&:hover": {
       opacity: 0.8,
+    },
+
+    "&:disabled": {
+      opacity: 0.5,
+      cursor: "default",
     },
   },
   ({ variant }: ButtonType) => ({

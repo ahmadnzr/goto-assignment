@@ -45,7 +45,7 @@
 
 @media screen and (min-width: 800px) {
   :root {
-    --max-width: 900px;
+    --max-width: 600px;
     --radius-full: 100%;
 
     --text-xxs: 12px;
