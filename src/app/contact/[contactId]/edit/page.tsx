@@ -36,7 +36,7 @@ const UpdateContact = ({ params }: { params: { contactId: string } }) => {
   const {
     handleSubmit,
     register,
-    formState: { errors },
+    formState: { errors, isDirty },
     setValue,
     reset,
   } = useForm<InputField>({
@@ -59,6 +59,7 @@ const UpdateContact = ({ params }: { params: { contactId: string } }) => {
       name: string;
       value: string;
       isDeleteAble?: boolean;
+      isUpdated?: boolean;
     }[]
   >([
     {
@@ -96,13 +97,16 @@ const UpdateContact = ({ params }: { params: { contactId: string } }) => {
         }
       }
     });
-    const phoneNumbers = contact?.phones.map((item) => item.number);
-    const newPhone = phones
-      .map((item) => item.number)
-      .filter((item) => !phoneNumbers?.includes(item));
+    const phoneNumbers = contact?.phones.map((item) => item) || [];
+    const phonesField = phones.map((item) => item);
 
-    const phoneToEdit = newPhone.slice(0, phoneNumbers?.length);
-    const phoneToAdd = newPhone.slice(phoneToEdit.length, newPhone.length);
+    const phoneToEdit = phonesField
+      .slice(0, phoneNumbers.length)
+      .map((item, i) => ({ old: phoneNumbers[i].number, new: item.number }))
+      .filter((item) => item.new !== item.old);
+    const phoneToAdd = phones.slice(phoneNumbers.length, phonesField.length);
+
+    console.log(phoneToAdd, phoneToEdit);
 
     Promise.all([
       updateContact({
@@ -116,17 +120,17 @@ const UpdateContact = ({ params }: { params: { contactId: string } }) => {
       }),
       ...phoneToAdd.map((item) => {
         addNumberToContact({
-          variables: { contact_id: contact?.id, phone_number: item },
+          variables: { contact_id: contact?.id, phone_number: item.number },
         });
       }),
       ...phoneToEdit.map((item, i) =>
         editPhoneNumber({
           variables: {
             pk_columns: {
-              number: contact?.phones[i].number,
+              number: item.old,
               contact_id: contact?.id,
             },
-            new_phone_number: item,
+            new_phone_number: item.new,
           },
         })
       ),
@@ -259,13 +263,16 @@ const UpdateContact = ({ params }: { params: { contactId: string } }) => {
           ))}
         </FormGroup>
         <FormGroup direction="row" gap="30px">
-          <Button type="submit">Save</Button>
+          <Button type="submit" disabled={!isDirty}>
+            Save
+          </Button>
           <Button
             variant="ghost"
             onClick={() => {
               setPhoneFields(contact?.phones || []);
               reset();
             }}
+            disabled={!isDirty}
           >
             Reset
           </Button>
