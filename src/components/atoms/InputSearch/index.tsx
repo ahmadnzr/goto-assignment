@@ -60,7 +60,7 @@ const Input = styled.input({
   width: "100%",
   border: "none",
   backgroundColor: "inherit",
-  color: `var(--neutral-40)`,
+  color: `var(--neutral-50)`,
 
   "&:focus": {
     outline: "none",
