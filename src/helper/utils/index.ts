@@ -1,25 +1,21 @@
-type LocalStorageKey = "FAVORITE";
+interface Obj {
+  [key: string]: string | null | undefined;
+}
 
-export const getLocalStorage = <T>(key: LocalStorageKey): T | null => {
-  try {
-    if (typeof window === "undefined") return null;
-    const value = localStorage.getItem(key);
+type toRemove = null | string | undefined;
 
-    if (value === null) {
-      return null;
-    }
+export const transformObject = <T>(
+  obj: Obj /** object to be transformed */,
+  toRemove: toRemove[] /** field object to be deleted based on its value */
+): T => {
+  let newObj: Obj = {};
+  let newKeys = Object.keys(obj).filter(
+    (item) => !toRemove.includes(obj[item])
+  );
 
-    return JSON.parse(value) as T;
-  } catch (error) {
-    return null;
-  }
-};
+  newKeys.forEach((key) => {
+    newObj[key] = obj[key];
+  });
 
-export const setLocalStorage = <T>(key: LocalStorageKey, value: T) => {
-  try {
-    const serializedValue = JSON.stringify(value);
-    localStorage.setItem(key, serializedValue);
-  } catch (error) {
-    console.log(error);
-  }
+  return newObj as T;
 };

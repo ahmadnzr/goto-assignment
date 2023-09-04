@@ -9,7 +9,7 @@ import useContactDetailHook from "@/helper/hooks/useContactDetailHook";
 import { Button, Colors, Icon, Loading, Popup, TextStyle } from "@/components";
 import Navbar from "@/components/template/Navbar";
 import { PopupProps } from "@/helper/types";
-import { getLocalStorage, setLocalStorage } from "@/helper/utils";
+import { getLocalStorage, setLocalStorage } from "@/helper/utils/localStorage";
 import { ListMenu } from "@/components/atoms/CircleButton";
 import { ApolloError, useMutation } from "@apollo/client";
 import { DELETE_CONTACT } from "@/helper/queries/delete-contact";

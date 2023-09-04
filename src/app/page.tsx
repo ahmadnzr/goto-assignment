@@ -10,7 +10,7 @@ import useContactListHook, {
 import { Colors, Loading, TextStyle, CardList, Popup } from "@/components/";
 import TopContent, { Filter } from "@/components/template/Home/TopContent";
 
-import { getLocalStorage, setLocalStorage } from "@/helper/utils";
+import { getLocalStorage, setLocalStorage } from "@/helper/utils/localStorage";
 import { PopupProps } from "@/helper/types";
 import Pagination from "@/components/molecules/Pagination";
 import { useLazyQuery } from "@apollo/client";

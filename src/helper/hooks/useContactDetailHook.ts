@@ -1,7 +1,7 @@
 import { ApolloError, useQuery } from "@apollo/client";
 
 import { CONTACT_DETAIL } from "../queries/list";
-import { getLocalStorage } from "../utils";
+import { getLocalStorage } from "../utils/localStorage";
 import { ContactApiResponse } from "./useContactListHook";
 import { useEffect, useState } from "react";
 
