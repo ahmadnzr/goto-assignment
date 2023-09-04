@@ -11,6 +11,7 @@ import Navbar from "@/components/template/Navbar";
 
 import { ADD_CONTACT_WITH_PHONE } from "@/helper/queries/create-contact";
 import { InputField, PopupProps } from "@/helper/types";
+import { transformObject } from "@/helper/utils";
 
 const AddContact = () => {
   const router = useRouter();
@@ -36,37 +37,19 @@ const AddContact = () => {
   const [successPopup, setSuccessPopup] = useState(false);
 
   const onSubmit: SubmitHandler<InputField> = (data) => {
-    const listPhone = Object.keys(data).filter((item) =>
+    const newData = transformObject<InputField>(data, [""]);
+    let phones: { number: string }[] = [];
+
+    const phoneFields = Object.keys(newData).filter((item) =>
       item.includes("phone-number")
     );
-    const currPhoneFieldName = phoneField.map((item) => item.name);
-    const phoneToRemove = listPhone.filter(
-      (item, i) => !currPhoneFieldName.includes(item)
-    );
-
-    const filteredData = Object.keys(data)
-      .filter((item) => !phoneToRemove.includes(item))
-      .map((key) => ({ [key]: data[key] }));
-
-    const transformToObject: Record<string, string | { number: string }[]> = {};
-    const phones: { number: string }[] = [];
-
-    filteredData.forEach((item) => {
-      for (const key in item) {
-        if (key.startsWith("phone-number-")) {
-          phones.push({ number: item[key] });
-          transformToObject["phones"] = phones;
-        } else {
-          transformToObject[key] = item[key];
-        }
-      }
-    });
+    phones = phoneFields.map((item) => ({ number: newData[item] }));
 
     addContact({
       variables: {
-        first_name: transformToObject.firstname,
-        last_name: transformToObject.lastname,
-        phones: transformToObject.phones,
+        first_name: newData.firstname,
+        last_name: newData.lastname,
+        phones: phones,
       },
     })
       .then(() => {

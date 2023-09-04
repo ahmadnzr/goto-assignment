@@ -1,3 +1,22 @@
-it("should run a valid test", () => {
-  expect(2 + 1).toBe(3);
+import { transformObject } from "@/helper/utils";
+
+describe("utils global functions", () => {
+  it("should transform object correctly", () => {
+    const obj = {
+      name: "Nizar",
+      addres: null,
+      phone: null,
+      wa: undefined,
+      status: "active",
+      vehicle: "",
+    };
+    const expectedObj = {
+      name: "Nizar",
+      status: "active",
+    };
+
+    expect(transformObject(obj, [null, undefined, ""])).toStrictEqual(
+      expectedObj
+    );
+  });
 });

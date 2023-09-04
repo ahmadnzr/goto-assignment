@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ApolloError, useQuery } from "@apollo/client";
 
-import { getLocalStorage } from "../utils";
+import { getLocalStorage } from "../utils/localStorage";
 import { CONTACT_LIST } from "../queries/list";
 
 export interface ContactApiResponse {
