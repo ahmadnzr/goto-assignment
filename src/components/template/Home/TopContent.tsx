@@ -71,7 +71,7 @@ const TopContent = ({
           showMenu1={showMenu}
         >
           <TextStyle size="lg" weight="bold" color={Colors.PRIMARY_10}>
-            Contact
+            Phone Book
           </TextStyle>
         </Navbar>
         <InputSearch value={search} onChange={onChange} onReset={onReset} />
